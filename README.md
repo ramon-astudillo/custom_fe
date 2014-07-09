@@ -40,7 +40,9 @@ is here provided. This front-end is also able to read DIRHA-corpora meta-data
 allowing to perform various oracle knowledge experiments, like e.g. Oracle
 beamforming or Oracle Voice Activity Detection on DIRHA-corpora, see
 
-    [1] M. Matassoni, R. F. Astudillo, A. Katsamanis, M. Ravanelli "The DIRHA-GRID corpus: baseline and tools for multi-room distant speech recognition using distributed microphones", Interspeech 2014 (to appear) 
+    [1] M. Matassoni, R. F. Astudillo, A. Katsamanis, M. Ravanelli "The DIRHA-GRID corpus: baseline 
+    and tools for multi-room distant speech recognition using distributed microphones", Interspeech 
+    2014 (to appear) 
 
 Once the Matlab tools are instaled you can do a test run with
 
