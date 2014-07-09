@@ -1,3 +1,6 @@
+custom_fe
+=============
+
 HCopy_UP is a bash wrapper for a custom front-end usable with HTK and Kaldi. It
 imitates HCopy's functionality but calls Matlab or Python code instead. This
 allows to easily create custom front-ends that write the features in HTK 
