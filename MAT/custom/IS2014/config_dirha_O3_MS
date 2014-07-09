@@ -1,0 +1,9 @@
+#
+# GRID-DIRHA CONFIGURATION
+#
+
+# Microphone Network Processing
+MIC_SEL = OracleMic
+
+# Voice Activity Detection
+VAD = OracleTxt

@@ -1,0 +1,55 @@
+HCopy_UP is a bash wrapper for a custom front-end usable with HTK and Kaldi. It
+imitates HCopy's functionality but calls Matlab or Python code instead. This
+allows to easily create custom front-ends that write the features in HTK 
+format and can be therefore incorporated to the multiple HTK/Kaldi recipes
+available with minor changes.
+
+Since the wrapper is in bash, its use is limited do unix and cygwin 
+envrionments. Note however that both pure Matlab MCopy and pure Python (not 
+available yet) HCopy wrappers are also provided. These should work also in 
+Windows. See the Matlab case as an example.
+
+The wrappers also support observation uncertainty techniques. Patches are also
+provided to implement Uncertainty Decoding and Modified Imputation in HTK.
+
+**Instalation of Matlab Tools**
+
+The wrapper makes use of two external toolboxes. The voicebox toolbox
+
+    cd ./MAT/
+    wget http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.zip
+    unzip voicebox.zip -d voicebox
+
+and the stft_up_tools
+
+    wget https://github.com/ramon-astudillo/stft_up_tools/archive/master.zip
+    unzip master.zip
+    mv stft_up_tools-master stft_up_tools
+
+Depending on your platform wget might not be available. You can always 
+download them with a browser. Note also that from the voicebox toolbox, only 
+the writehtk.m function is used.  
+
+If matlab is available on your bin, this should be enough. If not, you can edit
+line 33 of HCopy_UP to indicate a MATLAB_PATH variable.
+
+**Test Using the GRID-DIRHA Baseline Front-End**
+
+As an example, the Matlab front-end for the DIRHA-GRID corpus baseline
+is here provided. This front-end is also able to read DIRHA-corpora meta-data
+allowing to perform various oracle knowledge experiments, like e.g. Oracle
+beamforming or Oracle Voice Activity Detection on DIRHA-corpora, see
+
+    [1] M. Matassoni, R. F. Astudillo, A. Katsamanis, M. Ravanelli "The DIRHA-GRID corpus: baseline and tools for multi-room distant speech recognition using distributed microphones", Interspeech 2014 (to appear) 
+
+Once the Matlab tools are instaled you can do a test run with
+
+    ./custom_fe/HCopy_UP MAT -C ./custom_fe/MAT/custom/IS2014/config_baseline \
+                         ./custom_fe/MAT/stft_up_tools/DATA/s29_pbiz6p.wav \
+                         ./s29_pbiz6p.mfc \
+                         -debug
+
+Note that HCopy_UP will inidicate the coresponding -debug call using only
+MCopy.m. This is much faster as it can be done inside Matlab multiple times
+to debug a custom front-end. Remember to put a breakpoint in MCopy before the 
+exit or it will close Matlab after each run!.

@@ -1,0 +1,24 @@
+35c35
+< char *hmodel_version = "!HVER!HModel:   3.4.1 [CUED 12/03/09]";
+---
+> char *hmodel_version = "!HVER!HModel:   3.4.1b [CUED 12/03/09]";
+5421a5422,5425
+>    /*RAMONM: Modified imputation is here implemented. Note that:
+>    1) x now contains 2*vecSize elements. The first half corresponds to 
+>    normal features and the second to their corresponding uncertainties. 
+>    2) mp->cov.var is the INVERSE of the covariance*/
+5427c5431,5437
+<       xmm=x[i] - mp->mean[i];
+---
+>       /*RAMONM:   
+>       Normal
+>       xmm = (x[i] - mp->mean[i]);
+>       sum += xmm*xmm*mp->cov.var[i];*/
+> 	  
+>       /*  Modified imputation */
+>       xmm = (x[i] - mp->mean[i])/(x[i+vecSize]*mp->cov.var[i]+1.0);
+5428a5439,5442
+> 	  
+>       /* Uncertainty Decoding
+>       xmm = (x[i] - mp->mean[i]);
+>       sum += (xmm*xmm*mp->cov.var[i]/(x[i+vecSize]*mp->cov.var[i]+1.0))+log(x[i+vecSize]*mp->cov.var[i]+1.0);*/

@@ -1,0 +1,6 @@
+#
+# GRID-DIRHA CONFIGURATION
+#
+
+# Voice Activity Detection
+VAD = vad/labels/*_mixed_LA6_vad_nosil.mlf 

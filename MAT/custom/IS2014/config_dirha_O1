@@ -1,0 +1,6 @@
+#
+# GRID-DIRHA CONFIGURATION
+#
+
+# Voice Activity Detection
+VAD = OracleTxt

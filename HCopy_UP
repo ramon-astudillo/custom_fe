@@ -1,0 +1,195 @@
+#!/bin/bash -e
+
+# Wrapper for custom feature extractions imitating the Hidden Markov Model
+# Toolkit's (HTK's) tool HCopy. See help below for instructions on how to
+# run it  
+#
+# Ramon F. Astudillo
+
+# Help of HCopy_UP 
+function print_help 
+{
+    printf "
+HCopy_UP <interpreter> <HCopy_arguments>
+
+<interpreter> can be MAT (Matlab), HTK, PY (Python). In the case of MAT
+and PY, it needs at least one config file specified with -C with the 
+variable CUSTOM_FEATS_FOLDER, containing the path to the custom feature 
+extraction.
+
+This script should be provided inside the custom_fe tools folder. This 
+folder should contain MAT and/or PY modules when available.
+"
+}
+
+# Error function
+error(){
+    printf "\n\033[91mERROR in $1 line $2: %s\033[0m\n" "$3" 1>&2 
+    exit 1
+}
+
+# CONFIGURATION
+# If executables are not in your bin or not reachable, specify them here
+#MATLAB_PATH=/usr/somewhere/matlab
+#PYTHON_PATH=/usr/somewhere/python    
+#HCopy_PATH=/usr/somewhere/HCopy 
+# This folder contains the Matlab and Python tools
+HCopy_UP_FOLDER=./custom_fe
+
+# CHECK HCopy_UP_FOLDER EXISTS  
+if [ ! -d "$HCopy_UP_FOLDER" ];then 
+    error $0 $LINENO \
+"Could not find tools folder 
+
+$HCopy_UP_FOLDER
+
+The HCopy_UP_FOLDER variable defined in HCopy_UP must point to a folder 
+containing the HCopy_UP code.
+"  
+fi 
+
+# ARGUMENT HANDLING
+if [ "$#" -lt "2" ];then
+   print_help
+   exit
+fi
+
+# HTK | MAT | PY
+toolbox=$1
+shift
+HTK_STRING=$@
+
+#
+# MATLAB FEATURES
+#
+if [ "$toolbox" == "MAT" ];then
+
+    # If MATLAB_PATH not set check if it is in the command line
+    if [ -z $MATLAB_PATH ];then 
+        if ! which matlab > /dev/null 2>&1; then
+            error $0 $LINENO \
+"No Matlab binary found on your path. 
+
+You can set the MATLAB_PATH variable inside HCopy_UP to point to your 
+Matlab binary
+"
+        fi
+    fi 
+
+    # CHECK FOLDER WITH MATLAB TOOLS EXISTS
+    if [ ! -f $HCopy_UP_FOLDER/MAT/htk/MCopy.m ];then
+        error $0 $LINENO \
+"Matlab HCopy tools not found under
+
+$HCopy_UP_FOLDER/MAT/htk/MCopy.m
+
+The tools folder $HCopy_UP_FOLDER is present but the Matlab tools seem not 
+be installed, see ./custom_fe/install.
+" 
+    fi
+    # IF DEBUG MODE USED REMOVE NODISPLAY FLAG 
+    debug=0
+    for arg in $@;do
+        if [ "$arg" == "-debug" ];then
+            debug=1   
+            break 
+        fi
+    done
+     
+    # LAUNCH MATLAB
+    if [ -z $MATLAB_PATH ];then 
+        if [ "$debug" == "1" ];then 
+            echo "Running Matlab in debug mode, its maybe better to call it " \
+                 "directly in Matlab as
+
+                  addpath('$HCopy_UP_FOLDER/MAT/htk/');" \
+                  "MCopy('$HCopy_UP_FOLDER/MAT/','$HTK_STRING')"              
+            matlab -r "addpath('$HCopy_UP_FOLDER/MAT/htk/');MCopy('$HCopy_UP_FOLDER/MAT/','$HTK_STRING')" 
+            read -p "Job finished, press any key to continue"
+        else 
+            matlab -nodisplay \
+                   -r "addpath('$HCopy_UP_FOLDER/MAT/htk/');MCopy('$HCopy_UP_FOLDER/MAT/','$HTK_STRING')" 
+        fi
+    else
+        if [ "$debug" == "1" ];then 
+            echo "Running Matlab in debug mode, its maybe better to call it " \
+                 "directly in Matlab as
+
+                  addpath('$HCopy_UP_FOLDER/MAT/htk/');" \
+                  "MCopy('$HCopy_UP_FOLDER/MAT/','$HTK_STRING')"
+            $MATLAB_PATH -r "addpath('$HCopy_UP_FOLDER/MAT/htk/');MCopy('$HCopy_UP_FOLDER/MAT/','$HTK_STRING')" 
+            read -p "Job finished, press any key to continue"
+        else 
+            $MATLAB_PATH -nodisplay \
+                         -r "addpath('$HCopy_UP_FOLDER/MAT/htk/');MCopy('$HCopy_UP_FOLDER/MAT/','$HTK_STRING')" 
+        fi
+    fi
+
+    # CHECK IF MATLAB EXITED WITH ERRORS 
+    # Matlab license failure or Matlab exited with exit(2)
+    if [ ${PIPESTATUS[0]} -ne 0 ];then
+       error $0 $LINENO "Matlab returned an error, try -debug flag"
+    fi
+
+#
+# PYTHON FEATURES
+#
+elif [ "$toolbox" == "PY" ];then
+
+    # If PYTHON_PATH not set check if it is in the command line
+    if [ -z $PYTHON_PATH ];then 
+        if ! which python > /dev/null 2>&1; then
+            error $0 $LINENO \ 
+"No Python binary found on your path. 
+
+You can set the PYTHON_PATH variable inside HCopy_UP pointing to your
+Python binary
+
+"
+            exit 1
+        fi
+    fi 
+    # CHECK FOLDER WITH PYTHON TOOLS EXISTS
+    HCo_py_PATH=$HCopy_UP_FOLDER/PY/speech_tools/interfaces/HCo.py          
+    if [ ! -f $HCo_py_PATH ];then
+        error $0 $LINENO \
+"Python HCopy tools not found under
+
+$HCo_py_PATH
+
+The Python tools are not currently available.
+" 
+    fi 
+    # LAUNCH PYTHON
+    if [ -z $PYTHON_PATH ];then 
+        python $HCo_py_PATH $HTK_STRING    
+    else
+        $PYTHON_PATH $HCo_py_PATH $HTK_STRING 
+    fi
+#
+# HTK FEATURES
+#
+elif [ "$toolbox" == "HTK" ];then
+    # If HCopy_PATH not set check if it is in the command line
+    if [ -z $HCopy_PATH ];then 
+        if ! which HCopy > /dev/null 2>&1; then
+            error $0 $LINENO \
+"No HCopy binary found on your path. 
+
+You can set the HCopy_PATH variable inside HCopy_UP to point to your 
+HCopy binary
+"
+        fi
+    fi 
+    # LAUNCH HTK
+    if [ -z $HCopy_PATH ];then 
+        HCopy $HTK_STRING    
+    else
+        $HCopy_PATH $HTK_STRING 
+    fi
+
+else
+    error $0 $LINENO "Unkown toolbox $toolbox (must be MAT|PY|HTK)!
+"
+    exit 1
+fi

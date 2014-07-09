@@ -1,0 +1,14 @@
+35c35
+< char *hparm_version = "!HVER!HParm:   3.4.1 [CUED 12/03/09]";
+---
+> char *hparm_version = "!HVER!HParm:   3.4.1b [CUED 12/03/09]";
+2915c2915,2921
+<       ob.swidth[i] =swidth[i];
+---
+> 	  /*RAMON:Width of observation is double of feature width because it now 
+> 	  includes uncertainties for each feature*/
+> 	   if(i==1)
+> 		   ob.swidth[i] =2*swidth[i];
+> 	   else
+> 		   ob.swidth[i] =swidth[i];
+> 
