@@ -87,6 +87,11 @@ for i=1:length(or_ref_mics)
     else
         % Microphone audio and indices for command and preceeding background
         z_t = readaudio(or_ref_mics{i}{1});
+        % For non-DIRHA data it might be the case that we have multiple
+        % channels. In this case add them
+        if size(z_t,2) > 1
+            z_t = sum(z_t,2);
+        end      
         y_t = z_t(or_ref_mics{i}{2});
         d_t = z_t(or_ref_mics{i}{3});
     end
@@ -159,7 +164,7 @@ for i=1:length(or_ref_mics)
     if isfield(config, 'iup') && config.iup
         % Posterior propagation through ISTFT
         hat_X_W = stft_HTK(istft_HTK(hat_X_W,config),config);
-        MSE     = istft_stft_HTK_up2(MSE,config,config);
+        MSE     = istft_stft_HTK_up(MSE,config,config);
     end
 
     %
