@@ -10,7 +10,13 @@
 %
 % Ramon F. Astudillo 
 
-function [x,fs] = readaudio(audio_file)
+function [x,fs] = readaudio(audio_file, machinefmt)
+
+% For raw, default format is little endian see
+% http://www.mathworks.com/help/matlab/ref/fopen.html
+if nargin < 2
+    machinefmt = 'n';
+end
 
 [dum,dum,type]=fileparts(audio_file);
 
@@ -20,7 +26,7 @@ if regexp(type,'\.wav$')
 % RAW
 % Admits raw1, raw2. Useful for WSJ0 extraction (wv1, wv2 formats)     
 elseif regexp(type,'\.raw[0-9]?$')
-    fid = fopen(audio_file,'r');
+    fid = fopen(audio_file,'r', machinefmt);
     x   = fread(fid,inf,'int16');
     fclose(fid);
     fs = [];

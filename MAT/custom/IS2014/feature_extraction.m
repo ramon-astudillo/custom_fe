@@ -86,7 +86,19 @@ for i=1:length(or_ref_mics)
         [y_t, d_t] = delay_and_sum(or_ref_mics{i});
     else
         % Microphone audio and indices for command and preceeding background
-        z_t = readaudio(or_ref_mics{i}{1});
+        if isfield(config, 'byteorder') 
+            if strcmp(config.byteorder, 'NONVAX')
+                % Big-Endian
+                z_t = readaudio(or_ref_mics{i}{1}, 'b');
+            elseif strcmp(config.byteorder, 'VAX')
+                % Default: Little-Endian
+                z_t = readaudio(or_ref_mics{i}{1});
+            else
+                error('Unknown config.machineformat %s', config.byteorder)
+            end
+        else
+            z_t = readaudio(or_ref_mics{i}{1});
+        end
         % For non-DIRHA data it might be the case that we have multiple
         % channels. In this case add them
         if size(z_t,2) > 1
