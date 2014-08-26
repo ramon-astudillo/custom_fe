@@ -133,13 +133,21 @@ for i=1:total_files
     % READ AUDIO
     % Note that if DIRHA's microphone selection used, OTHER channels might
     % be read instead inside feature_extraction.m
-    y = readaudio(HTK_call.source_files{i});
+    if strcmp(config_FE.byteorder, 'NONVAX')
+        % Big-Endian
+        y_t = readaudio(HTK_call.source_files{i}, 'b');
+    elseif strcmp(config_FE.byteorder, 'VAX')
+        % Default: Little-Endian
+        y_t = readaudio(HTK_call.source_files{i});
+    else
+        error('Unknown config.machineformat %s', config_FE.byteorder)
+    end
  
     % FEATURE EXTRACTION
     % Make file names accessible inside feature extraction. 
     config_FE.target_file = HTK_call.target_files{i};  
     config_FE.source_file = HTK_call.source_files{i};  
-    Features              = feature_extraction(y, config_FE);
+    Features              = feature_extraction(y_t, config_FE);
     
     % WRITE FILES IN HTK FORMAT 
     writehtk(HTK_call.target_files{i},Features',fp,htk_format)

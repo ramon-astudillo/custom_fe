@@ -27,6 +27,9 @@ if regexp(type,'\.wav$')
 % Admits raw1, raw2. Useful for WSJ0 extraction (wv1, wv2 formats)     
 elseif regexp(type,'\.raw[0-9]?$')
     fid = fopen(audio_file,'r', machinefmt);
+    if fid == -1
+        error('File %s could not be opened or found', audio_file)
+    end
     x   = fread(fid,inf,'int16');
     fclose(fid);
     fs = [];
