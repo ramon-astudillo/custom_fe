@@ -66,7 +66,7 @@ total_files = length(HTK_call.source_files);
 
 % Basic debug mode, stop
 if HTK_call.debug_mode 
-    dbstop in MCopy at 70
+    dbstop in MCopy at 73
 end
 
 % Read HTK config(s), specified with the -C option
@@ -81,9 +81,9 @@ HTK_config.unc_prop = HTK_call.unc_prop;
 % INITIALIZE FEATURE EXTRACTION CONFIG
 % Watch for variable number of arguments (backwards compatibility)
 if nargin('init_feature_extraction_config') == 2 
-	config_FE = init_feature_extraction_config(HCopy_UP_FOLDER,HTK_config);
+    config_FE = init_feature_extraction_config(HCopy_UP_FOLDER,HTK_config);
 else
-	config_FE = init_feature_extraction_config(HTK_config);
+    config_FE = init_feature_extraction_config(HTK_config);
 end
 
 % GET HTK FEATURES FORMAT PARAMETERS
@@ -133,14 +133,11 @@ for i=1:total_files
     % READ AUDIO
     % Note that if DIRHA's microphone selection used, OTHER channels might
     % be read instead inside feature_extraction.m
-    if strcmp(config_FE.byteorder, 'NONVAX')
-        % Big-Endian
-        y_t = readaudio(HTK_call.source_files{i}, 'b');
-    elseif strcmp(config_FE.byteorder, 'VAX')
-        % Default: Little-Endian
-        y_t = readaudio(HTK_call.source_files{i});
+    if isempty(config_FE.mic_sel)
+        y_t = readaudio(HTK_call.source_files{i}, config_FE.byteorder,...
+                        config_FE.in_fs, config_FE.fs);
     else
-        error('Unknown config.machineformat %s', config_FE.byteorder)
+        y_t = [];
     end
  
     % FEATURE EXTRACTION
@@ -150,7 +147,7 @@ for i=1:total_files
     Features              = feature_extraction(y_t, config_FE);
     
     % WRITE FILES IN HTK FORMAT 
-    writehtk(HTK_call.target_files{i},Features',fp,htk_format)
+    writehtk(HTK_call.target_files{i},Features',config_FE.fp,config_FE.htk_format)
     
     % INFORM USER
     n_files = n_files+1;

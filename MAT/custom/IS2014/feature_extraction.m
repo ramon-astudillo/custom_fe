@@ -38,7 +38,7 @@ function x = feature_extraction(y_t, config)
 % DIRHA CORPORA ACOUSTIC EVENT DETECTION AND MICROPHONE NETWORK PROCESSING 
 %
 
-if isfield(config, 'mic_sel') || isfield(config, 'vad')
+if ~isempty(config.mic_sel) || ~isempty(config.vad)
     
     % Use DIRHA ORACLES to obtain a cell of different speech events
     or_ref_mics = DIRHA_AED_and_MNP(config);
@@ -47,8 +47,7 @@ else
     % file and no background. This is *not* a good option for DIRHA data as 
     % utterances are very long. This option is left here for compatibility 
     % with shorter tasks.    
-    if isfield(config, 'noise_estimation')
-        
+    if ~isempty(config.noise_estimation)
         % If we use speech enhancement we will nedd a small initialization 
         % segment at least. We pick here 500ms. 
         t_init      = 0.5*config.fs;
@@ -80,25 +79,15 @@ for i=1:length(or_ref_mics)
     % BEAMFORMING AND VAD 
     %
     
-    if isfield(config, 'mic_sel') && strcmp(config.mic_sel,'OracleAlign')
+    if strcmp(config.mic_sel,'OracleAlign')
         % Apply delay and sum to the aligned speech and precceding
         % background events
-        [y_t, d_t] = delay_and_sum(or_ref_mics{i});
+        [y_t, d_t] = delay_and_sum(or_ref_mics{i},config.byteorder,...
+                                   config.in_fs,config.fs);
     else
         % Microphone audio and indices for command and preceeding background
-        if isfield(config, 'byteorder') 
-            if strcmp(config.byteorder, 'NONVAX')
-                % Big-Endian
-                z_t = readaudio(or_ref_mics{i}{1}, 'b');
-            elseif strcmp(config.byteorder, 'VAX')
-                % Default: Little-Endian
-                z_t = readaudio(or_ref_mics{i}{1});
-            else
-                error('Unknown config.machineformat %s', config.byteorder)
-            end
-        else
-            z_t = readaudio(or_ref_mics{i}{1});
-        end
+        z_t = readaudio(or_ref_mics{i}{1},config.byteorder,...
+                        config.in_fs,config.fs);
         % For non-DIRHA data it might be the case that we have multiple
         % channels. In this case add them
         if size(z_t,2) > 1
@@ -110,21 +99,16 @@ for i=1:length(or_ref_mics)
 
     % Rules for exact results on the DIRHA-GRID baseline
     % When using external MLF-based VAD, skip speech segments shorter than 3000
-    if (isfield(config, 'vad') && ...
-            ~isempty(regexp(config.vad,'.*\.mlf', 'once'))) && ...
-            length(y_t) < 3000
+    if ~isempty(regexp(config.vad,'.*\.mlf', 'once')) && length(y_t) < 3000
         continue
     end
     % Skip background according to different critearia for each approach 
     est_backgr = 1;
-    if isfield(config, 'mic_sel') && ...
-            strcmp(config.mic_sel, 'OracleAlign') 
+    if strcmp(config.mic_sel, 'OracleAlign') 
         if length(or_ref_mics{i}{3}{end}) <= 3000
             est_backgr = 0;
         end
-    elseif ((isfield(config, 'mic_sel') &&...
-            strcmp(config.mic_sel, 'OracleRoom')) ||...
-            isfield(config, 'vad'))
+    elseif (strcmp(config.mic_sel, 'OracleRoom') || ~isempty(config.vad))
         if isempty(d_t)
             est_backgr = 0;
         end
@@ -136,7 +120,7 @@ for i=1:length(or_ref_mics)
     % NOISE ESTIMATION
     %
     
-    if isfield(config, 'noise_estimation') 
+    if ~isempty(config.noise_estimation) 
         
         % Simple enhancement with Lambda_D and decision directed a priori SNR
         % estimation. Provides the posterior of the Wiener filter
@@ -173,7 +157,7 @@ for i=1:length(or_ref_mics)
     % PROPAGATION THROUGH ISTFT+STFT
     %
     
-    if isfield(config, 'iup') && config.iup
+    if config.iup
         % Posterior propagation through ISTFT
         hat_X_W = stft_HTK(istft_HTK(hat_X_W,config),config);
         MSE     = istft_stft_HTK_up(MSE,config,config);
@@ -183,7 +167,7 @@ for i=1:length(or_ref_mics)
     % ENHANCEMENT AND FEATURE EXTRACTION
     %
     
-    if isfield(config, 'enhancement')
+    if ~isempty(config.enhancement)
         
         if strcmp(config.enhancement,'LSA') 
         

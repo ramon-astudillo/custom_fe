@@ -13,9 +13,9 @@
 %
 % Ramón F. Astudillo
 
-function [y_t, d_t] = delay_and_sum(or_ref_mics)    
+function [y_t, d_t] = delay_and_sum(or_ref_mics,byteorder,in_fs,fs)    
 
-% GRID-DIRHA's Txts bounds are one sample off sometimes due to the
+% Txts bounds can be one sample off sometimes due to the
 % downsampling to 16KHz. We need to check all files for length in samples
 % Get all lengths
 Ts = zeros(length(or_ref_mics{2}),1);
@@ -51,7 +51,7 @@ d_t = zeros(L_D,1);
 for m=1:length(or_ref_mics{1})
     sp_idx = or_ref_mics{2}{m};
     bg_idx = or_ref_mics{3}{m};
-    tmp    = readaudio(or_ref_mics{1}{m});
+    tmp    = readaudio(or_ref_mics{1}{m},byteorder,in_fs,fs);
     if ds_crop
         y_t = y_t + tmp(sp_idx(1:min_t));
     else

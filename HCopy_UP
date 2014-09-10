@@ -94,14 +94,20 @@ Matlab binary
         else
             MATLAB_PATH=$(which matlab)
         fi
+    elif [ ! -f "$MATLAB_PATH" ];then
+        error $0 $LINENO \
+"The MATLAB_PATH you gave does not exist, check HCopy_UP # CONFIGURATION. 
+
+$MATLAB_PATH
+"
     fi 
 
-    # CHECK FOLDER WITH MATLAB TOOLS EXISTS
-    if [ ! -f $HCopy_UP_FOLDER/MAT/htk/MCopy.m ];then
+    # CHECK MATLAB TOOLS EXIST
+    if [ ! -f $HCopy_UP_FOLDER/MAT/voicebox/writehtk.m ];then
         error $0 $LINENO \
 "Matlab HCopy tools not found under
 
-$HCopy_UP_FOLDER/MAT/htk/MCopy.m
+$HCopy_UP_FOLDER/MAT/
 
 The tools folder $HCopy_UP_FOLDER is present but the Matlab tools seem not 
 be installed, see ./custom_fe/install.

@@ -16,7 +16,7 @@ function or_ref_mics = DIRHA_AED_and_MNP(config)
 % ORACLE MICROPHONE SELECTION
 % Note that Oracle mic selection is per speech event. This implies that we
 % need a VAD before microphone selection.
-if isfield(config, 'mic_sel') 
+if ~isempty(config.mic_sel)
 
     % Get the path identifying the simulation 
     sim_path    = regexp(config.source_file, ...
@@ -27,7 +27,7 @@ if isfield(config, 'mic_sel')
     if strcmp(config.mic_sel,'OracleRoom') 
 
         % Loose Oracle VAD
-        if isfield(config, 'vad') & strcmp(config.vad, 'OracleTxt')
+        if strcmp(config.vad, 'OracleTxt')
             or_ref_mics = get_oracle_ref_mic(sim_path{1},0,0);
             
         % Tight Oracle VAD    
@@ -39,7 +39,7 @@ if isfield(config, 'mic_sel')
     elseif strcmp(config.mic_sel,'OracleMic')
         
         % Loose Oracle VAD
-        if isfield(config, 'vad') & strcmp(config.vad, 'OracleTxt')
+        if strcmp(config.vad, 'OracleTxt')
             or_ref_mics = get_oracle_ref_mic(sim_path{1},1,0);
             
         % Tight Oracle VAD    
@@ -52,7 +52,7 @@ if isfield(config, 'mic_sel')
     elseif strcmp(config.mic_sel,'OracleAlign')
         
         % Loose Oracle VAD
-        if isfield(config, 'vad') & strcmp(config.vad, 'OracleTxt')
+        if strcmp(config.vad, 'OracleTxt')
             or_ref_mics = OracleVADPosRoom_Align(sim_path{1},0);
             
             % Tight Oracle VAD
@@ -66,7 +66,7 @@ if isfield(config, 'mic_sel')
 
 % ORACLE VAD ON GIVEN MICROPHONE
 else
-    if isfield(config, 'vad')
+    if ~isempty(config.vad)
         
         % Tight Oracle VAD
         if strcmp(config.vad,'Oracle')
@@ -114,5 +114,47 @@ else
     else    
         error('MMSEMFCC does needs always a VAD')
         %or_ref_mics = {{config.source_file 1:length(y_t) [] 1}};
+    end
+end
+
+% Special: It is assumed that the oracles are given fot the in_fs of the
+% corpus, not the work_fs of the features we sue. These can be different as
+% e.g. in the DIRHA_simII corpus
+% Get im_fs fromn the first file or the corpus
+% For Aligned Microphones
+if iscell(or_ref_mics{1}{1})
+    [dum,dum,in_fs] = readaudio(or_ref_mics{1}{1}{1},config.byteorder, ...
+        config.in_fs,config.fs);
+    if config.fs < in_fs
+        % Loop over speech events
+        for i=1:length(or_ref_mics)
+            % Loop over aligned microphones
+            for m=1:length(or_ref_mics{i}{1})
+                % Downsample boundaries for speech
+                init_t = ceil(or_ref_mics{i}{2}{m}(1)*config.fs/in_fs);
+                end_t  = floor(or_ref_mics{i}{2}{m}(end)*config.fs/in_fs);
+                or_ref_mics{i}{2}{m} = init_t:end_t;
+                % Downsample boundaries for background
+                init_t = ceil(or_ref_mics{i}{3}{m}(1)*config.fs/in_fs);
+                end_t  = floor(or_ref_mics{i}{3}{m}(end)*config.fs/in_fs);
+                or_ref_mics{i}{3}{m} = init_t:end_t;
+            end
+        end
+    end
+% For best microphone
+else
+    [dum,dum,in_fs] = readaudio(or_ref_mics{1}{1},config.byteorder, ...
+        config.in_fs,config.fs);
+    if config.fs < in_fs
+        for i=1:length(or_ref_mics)
+            % Downsample boundaries for speech
+            init_t = ceil(or_ref_mics{i}{2}(1)*config.fs/in_fs);
+            end_t  = floor(or_ref_mics{i}{2}(end)*config.fs/in_fs);
+            or_ref_mics{i}{2} = init_t:end_t;
+            % Downsample boundaries for background
+            init_t = ceil(or_ref_mics{i}{3}(1)*config.fs/in_fs);
+            end_t  = floor(or_ref_mics{i}{3}(end)*config.fs/in_fs);
+            or_ref_mics{i}{3} = init_t:end_t;
+        end
     end
 end

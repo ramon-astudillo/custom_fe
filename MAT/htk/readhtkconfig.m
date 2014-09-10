@@ -41,29 +41,31 @@ for c = 1:length(config_path_cell)
         % GET VALUE
         fieldvalue   = strtok(strtrim(items{i}{2}),'#');
         fieldname    = strtrim(lower(items{i}{1}));
-        % WATCH FOR SPECIAL CASE, VALUE IS SOURROUNDED BY ' '
-        special_case = regexp(fieldvalue,'^''(.*)''$','tokens','once');
-        if ~isempty(special_case)
-           % Store it without ' '
-           config.(fieldname)= special_case{1};
-           continue
-        end
-        % TRY TO READ ARGUMENT AS A NUMBER
-        % Note: Will fail with values that can be mistaken by the imaginary
-        % unit \<i\> \<j\>
-        if strcmp(fieldvalue,'i') || strcmp(fieldvalue,'j')
-            error('The characters i or j are ambiguous as config values')
-        end
-        fetch = str2num(fieldvalue);
-        if isempty(fetch)
-            config.(fieldname) = strtrim(fieldvalue);
-        else
-            config.(fieldname) = fetch;
-        end
+
         % SPECIAL CASE, EXTRACT CUSTOM_FEATS_FOLDER FROM CONFIG PATH
         if strcmp(fieldname,'cff_from_config_path')...
            && strcmp(fieldvalue,'T')
             config.('custom_feats_folder') = fileparts(config_path);
+        else
+            % WATCH FOR SPECIAL CASE, VALUE IS SOURROUNDED BY ' '
+            special_case = regexp(fieldvalue,'^''(.*)''$','tokens','once');
+            if ~isempty(special_case)
+               % Store it without ' '
+               config.(fieldname)= special_case{1};
+               continue
+            end
+            % TRY TO READ ARGUMENT AS A NUMBER
+            % Note: Will fail with values that can be mistaken by the imaginary
+            % unit \<i\> \<j\>
+            if strcmp(fieldvalue,'i') || strcmp(fieldvalue,'j')
+                error('The characters i or j are ambiguous as config values')
+            end
+            fetch = str2num(fieldvalue);
+            if isempty(fetch)
+                config.(fieldname) = strtrim(fieldvalue);
+            else
+                config.(fieldname) = fetch;
+            end
         end
     end  
 end
