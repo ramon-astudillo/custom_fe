@@ -7,3 +7,6 @@ MIC_SEL = OracleMic
 
 # Voice Activity Detection
 VAD = OracleTxt
+
+# Store each detection by separate for posterior validation
+SEPARATE_EVENTS = 1

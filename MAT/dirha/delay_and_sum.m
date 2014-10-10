@@ -60,10 +60,7 @@ for m=1:length(or_ref_mics{1})
     % Crop to smallest background
     tmp2   = tmp(bg_idx);
     if L_D
-        % This actually misaligns the different contexts. It is left to 
-        % obtain the exact results of the IS2014 baseline. Will be corrected
-        % in posterior versions.
-        d_t = d_t + tmp2(1:L_D,:);
+        d_t = d_t + tmp2(end-(L_D-1):end);
     end
 end
 y_t = y_t/length(or_ref_mics{1});

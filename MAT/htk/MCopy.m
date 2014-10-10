@@ -80,14 +80,15 @@ HTK_config.unc_prop = HTK_call.unc_prop;
 
 % INITIALIZE FEATURE EXTRACTION CONFIG
 % Watch for variable number of arguments (backwards compatibility)
-if nargin('init_feature_extraction_config') == 2 
+if nargin('init_feature_extraction_config') == 3
+    config_FE = init_feature_extraction_config(HCopy_UP_FOLDER, ...
+                                               HTK_config, ...
+                                               HTK_call);
+elseif nargin('init_feature_extraction_config') == 2 
     config_FE = init_feature_extraction_config(HCopy_UP_FOLDER,HTK_config);
 else
     config_FE = init_feature_extraction_config(HTK_config);
 end
-
-% GET HTK FEATURES FORMAT PARAMETERS
-[htk_format, fp] = get_HTK_headerparam(config_FE);
 
 % INFORM USER
 fprintf('\ndebug_mode  = %d\n',HTK_call.debug_mode)
@@ -144,10 +145,10 @@ for i=1:total_files
     % Make file names accessible inside feature extraction. 
     config_FE.target_file = HTK_call.target_files{i};  
     config_FE.source_file = HTK_call.source_files{i};  
-    Features              = feature_extraction(y_t, config_FE);
+    [Features, vad]       = feature_extraction(y_t, config_FE);
     
     % WRITE FILES IN HTK FORMAT 
-    writehtk(HTK_call.target_files{i},Features',config_FE.fp,config_FE.htk_format)
+    writefeatures(Features, vad, config_FE, HTK_call.target_files{i});
     
     % INFORM USER
     n_files = n_files+1;
@@ -244,34 +245,37 @@ if no_files
            'as a single source target pair']);
 end
 
-% function [htk_format, fp] = get_HTK_headerparam(config_FE)
+
+% function writefeatures(Features, vad, config_FE)
 %
-% Given a config file, it determines targetkind and frame period to be used
-% with writehtk.m function.
+% Write features in HTK format. If a cell provided, write a file per 
+% element of the cell. If vad not empty write beginning and end for each 
+% file
 
-function [htk_format, fp] = get_HTK_headerparam(config_FE)
+function writefeatures(Features, vad, config_FE, target_file)
 
-% DETERMINE TARGETKIND IN NUMERIC FORM 
-% The default feature extraction is MFCC_D_A_Z_0
-if ~isfield(config_FE,'targetkind')
-    htk_format = targetkind2num('MFCC_D_A_Z_0');
-    % htk_format = 11014;
+
+if iscell(Features)
+    for c=1:length(Features)
+        % Write file in HTK format
+        [dirn,basen,type]=fileparts(target_file);
+        % Write a text file with vad information
+        writehtk([dirn '/' basen '.' num2str(c) type],Features{c}',config_FE.fp,config_FE.htk_format)
+        if ~isempty(vad)
+            [dirn,basen]=fileparts(target_file);
+            fid=fopen([dirn '/' basen '.' num2str(c) '.vad'],'w');
+            fprintf(fid,'%s',vad{c});
+            fclose(fid);
+        end
+    end
 else
-    htk_format = targetkind2num(config_FE.targetkind);
-end
-
-% DETERMINE FRAME PERIOD IN 
-if isfield(config_FE,'windowsize') && ...
-   isfield(config_FE,'overlap') && ...
-   isfield(config_FE,'fs')
-    fp = (config_FE.windowsize-config_FE.overlap)/config_FE.fs;
-elseif isfield(config_FE,'windowsize') && ...
-   isfield(config_FE,'shift') && ...
-   isfield(config_FE,'fs')
-    fp = (config_FE.shift)/config_FE.fs;
-elseif isfield(config_FE,'fp')
-    fp = config_FE.fp;
-else
-    error(['Either windowsize, overlap (shift) and fs or fp have top be' ...
-           ' provided to compute prame period duration']);
+    % Write file in HTK format
+    writehtk(target_file,Features',config_FE.fp,config_FE.htk_format)
+    % Write a text file with vad information
+    if ~isempty(vad)
+        [dirn,basen]=fileparts(target_file,'w');
+        fid = fopen([dirn basen '.vad']);
+        fprintf(fid,'%s',vad{1});
+        fclose(fid);
+    end
 end

@@ -10,7 +10,7 @@
 %
 % Ramon F. Astudillo Sept 2013
 
-function config = init_feature_extraction_config(work_path,config)
+function config = init_feature_extraction_config(work_path,config,htk_call)
 
 % Matlab paths needed
 addpath([work_path '/stft_up_tools/mfcc_up']) % STFT-UP
@@ -39,6 +39,7 @@ HTK_supp = struct(...
 % ADDITIONALLY NON-HTK SUPPORTED FIELDS AND DEFAULT VALUES IF ADMITTED
 Extra_supp = struct(...
     'custom_feats_folder', NaN,... 
+    'separate_events'    ,  0,...     
     'in_fs'              , -1,...
     'fs'                 , NaN,...
     'shift'              , NaN,...
@@ -53,11 +54,18 @@ Extra_supp = struct(...
     'do_debug'           , 0,...
     'do_up'              , 0); 
 
+
+%
+% FEATURE EXTRACTION
+%
+
 % Complete config
 config = complete_defaults(config, HTK_supp, Extra_supp);
 
 % Initialize MFCCs (compute Mel-fiterbank and DCT matrices)
 [config.W,config.T]  = init_mfcc_HTK(config);
+
+% TODO: Move these to the config file
 
 % Additional needed fields
 config.usepower      = 'F';      % Magnitude MFCCs
@@ -84,9 +92,44 @@ config.htk_format  = 6 + 8192 + 256 + 512 + 2048;
 %
 
 % IMCRA 
-config.alpha     = 0.92;                     % Decision-directed a priori SNR 
-                                      % smoothing parameter. 
-config.dB_xi_min = -25;                      % Minimum a priori SNR in dB
+config.alpha     = 0.92;  % Decision-directed a priori SNR 
+                          % smoothing parameter. 
+config.dB_xi_min = -25;   % Minimum a priori SNR in dB
 config.imcra     = init_IMCRA(config.nfft/2+1);
 %
 config.alpha_d   = config.imcra.alpha_d;
+
+
+% %
+% % DIRHA CORPORA SPECIFIC ACTIONS
+% %
+% 
+% % If some DIRHA corpora specific action solicited in config, check if we
+% % have indeed DIRHA corpora.
+% if ~isempty(config.mic_sel) || ~isempty(config.vad)
+%     
+%     % Determine frequency of input data if not provided and determine if 
+%     % downsample needed
+%     if config.in_fs == -1
+%         [dum,dum,config.in_fs] = readaudio(htk_call.source_files{1},...
+%                                            config.byteorder, ...
+%                                            config.in_fs,config.fs);
+%     end
+%     if config.fs < config.in_fs
+%         downsample = config.fs/config.in_fs;
+%     else
+%         downsample = 0;
+%     end
+%     
+%     % Get the path identifying the simulation
+%     mdata  = regexp(htk_call.source_files{1}, ...
+%         '(?<root>.*)/(?<sim>\w+)/Signals/Mixed_Sources/.*', 'names', 'once');
+%     if isempty(mdata.sim)
+%         error(['You solicited DIRHA oracles by setting MIC_SEL or VAD' ...
+%             'in config but the file %d does not semm to be from a'
+%             ' a known DIRHA corpus'])
+%     end
+%     
+%     % Read the meta-data for the entire corpus
+%     config.dirha_or = readDIRHAmetadata(mdata.root, downsample);
+% end

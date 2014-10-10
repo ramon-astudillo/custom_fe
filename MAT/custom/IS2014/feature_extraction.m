@@ -32,13 +32,22 @@
 %
 % Ramon F. Astudillo Feb2014
 
-function x = feature_extraction(y_t, config)
+function [x, vad] = feature_extraction(y_t, config)
 
 %
 % DIRHA CORPORA ACOUSTIC EVENT DETECTION AND MICROPHONE NETWORK PROCESSING 
 %
 
 if ~isempty(config.mic_sel) || ~isempty(config.vad)
+    
+    % Check we are using a known DIRHA corpus
+    if isempty(regexp(config.source_file, ...
+        '(.*)/Signals/Mixed_Sources/.*', 'tokens', 'once'))
+        error(['You set MIC_SEL or VAD fields in config to values that' ...
+               ' imply DIRHA-corpus specific actions.\nThe path you gave'...
+               '\n    (%s)\ndoes not seem to be a known DIRHA corpus though'],...
+               config.source_file)
+    end
     
     % Use DIRHA ORACLES to obtain a cell of different speech events
     or_ref_mics = DIRHA_AED_and_MNP(config);
@@ -50,7 +59,7 @@ else
     if ~isempty(config.noise_estimation)
         % If we use speech enhancement we will nedd a small initialization 
         % segment at least. We pick here 500ms. 
-        t_init      = 0.5*config.fs;
+        t_init      = 0.02*config.fs;
         or_ref_mics = {{config.source_file t_init+1:length(y_t) 1:t_init 1}};
     else
         
@@ -62,13 +71,20 @@ end
 % PROCESSING FOR EACH SPEECH EVENT
 %
 
-% Initialize a matrix to store the features to maximum size. This will be cut
-%  to l_max later
-L        = fix((length(y_t)-config.windowsize) ...
-           /(config.windowsize - config.overlap)) + 1;
-mu_x     = zeros(3*(config.numceps+1),L);
-Sigma_x  = zeros(3*(config.numceps+1),L);
-l_max    = 1;
+if config.separate_events 
+    x   = cell(length(or_ref_mics),1);
+    vad = cell(length(or_ref_mics),1);
+else
+    % Initialize a matrix to store the features to maximum size. This will be cut
+    %  to l_max later
+    L        = fix((length(y_t)-config.windowsize) ...
+        /(config.windowsize - config.overlap)) + 1;
+    mu_x     = zeros(3*(config.numceps+1),L);
+    Sigma_x  = zeros(3*(config.numceps+1),L);
+    l_max    = 1;
+    vad      = {}; % wont be used
+end
+
 % Initialize noise
 Lambda_D = 1e-6*ones(config.nfft/2+1,1);
 
@@ -209,36 +225,71 @@ for i=1:length(or_ref_mics)
         [m_x,S_x] = cms_up(m_x,S_x);        
     end
     
-    % Store features
-    L2                            = size(m_x,2);
-    mu_x(:,l_max:l_max+(L2-1))    = m_x;
-    Sigma_x(:,l_max:l_max+(L2-1)) = S_x;
-    l_max                         = l_max + L2;
+    % Store features either by concatenation or in a cell along with vad
+    % info
+    if config.separate_events
+        
+        % Identify the room
+        if iscell(or_ref_mics{1}{1})
+            fetch=regexp(or_ref_mics{i}{1}{1}, ...
+                         '.*/Signals/Mixed_Sources/(.*)','tokens','once');
+        else
+            fetch=regexp(or_ref_mics{i}{1}, ...
+                         '.*/Signals/Mixed_Sources/(.*)','tokens','once'); 
+        end
+        roommic = fetch{1};
+        
+        % Return only mean or also variance
+        if config.unc_prop
+            x{i} = [m_x; S_x];
+        else
+            x{i} = m_x;
+        end
+        % If multiple mics per event processed, use boundaries of the
+        % first
+        if iscell(or_ref_mics{1}{1})
+            vad{i} = sprintf('%s %d %d\n',roommic,...
+                                  or_ref_mics{i}{2}{1}(1),...
+                                  or_ref_mics{i}{2}{1}(end));
+        else
+           vad{i} = sprintf('%s %d %d\n',roommic,...
+                                  or_ref_mics{i}{2}(1),...
+                                  or_ref_mics{i}{2}(end));
+        end
 
+    else    
+        L2                            = size(m_x,2);
+        mu_x(:,l_max:l_max+(L2-1))    = m_x;
+        Sigma_x(:,l_max:l_max+(L2-1)) = S_x;
+        l_max                         = l_max + L2;       
+    end
 end
-% Drop unused array space
-mu_x(:,l_max:end) = [];
-Sigma_x(:,l_max:end) = [];
 
-% Check for no speech detected at all, pass the whole utterance instead
-if l_max < 50
-    % STFT
-    Y = stft_HTK(y_t,config);
-    % Propagate Wiener filter posterior through the MFCCs
-    [m_x,S_x] = mfcc_up(Y,zeros(size(Y)),config);
-    % Append deltas, accelerations
-    [m_x,S_x] = append_deltas_up(m_x,S_x,config.targetkind,...
-                                 config.deltawindow,...
-                                 config.accwindow,...
-                                 config.simplediffs);
-    % cms *only* in this segment
-    [mu_x,Sigma_x] = cms_up(m_x,S_x);
-    %error('No speech was detected in %s!',config.source_file)
-end
-
-% Return only mean or also variance
-if config.unc_prop
-	x = [mu_x; Sigma_x];
-else
-	x = mu_x;
+if ~config.separate_events
+    % Drop unused array space
+    mu_x(:,l_max:end) = [];
+    Sigma_x(:,l_max:end) = [];
+    
+    % Check for no speech detected at all, pass the whole utterance instead
+    if l_max < 50
+        % STFT
+        Y = stft_HTK(y_t,config);
+        % Propagate Wiener filter posterior through the MFCCs
+        [m_x,S_x] = mfcc_up(Y,zeros(size(Y)),config);
+        % Append deltas, accelerations
+        [m_x,S_x] = append_deltas_up(m_x,S_x,config.targetkind,...
+            config.deltawindow,...
+            config.accwindow,...
+            config.simplediffs);
+        % cms *only* in this segment
+        [mu_x,Sigma_x] = cms_up(m_x,S_x);
+        %error('No speech was detected in %s!',config.source_file)
+    end
+    
+    % Return only mean or also variance
+    if config.unc_prop
+        x = [mu_x; Sigma_x];
+    else
+        x = mu_x;
+    end
 end
