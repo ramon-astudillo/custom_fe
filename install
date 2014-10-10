@@ -1,0 +1,167 @@
+#!/bin/bash 
+
+#
+# This downloads the needed custom_fe modules from the internet.
+#
+
+# URLS
+VOICEBOX_URL=http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.zip
+STFTUP_URL=https://github.com/ramon-astudillo/stft_up_tools/archive/master.zip
+OBSUNC_URL=https://github.com/ramon-astudillo/obsunc/archive/master.zip
+
+# Locate the root of the custom_fe toolbox
+ROOTCFE=$(dirname "${BASH_SOURCE[0]}")/ 
+
+# VOICEBOX'S WRITEHTK
+if [ -e "${ROOTCFE}MAT/voicebox/" ];then
+
+     # DOWNLOADED
+     printf "%-15s %-40s  \033[92m downloaded \033[0m\n" "VOICEBOX" ${ROOTCFE}MAT/voicebox/
+
+elif [ -e "${ROOTCFE}MAT/voicebox.zip" ];then
+
+     # UNZIP
+     echo "Unzipping writehtk.m from ${ROOTCFE}MAT/voicebox.zip" 
+     if [ ! -f ${ROOTCFE}MAT/voicebox ];then 
+         mkdir ${ROOTCFE}MAT/voicebox 
+     fi
+     unzip -p ${ROOTCFE}MAT/voicebox.zip writehtk.m > ${ROOTCFE}MAT/voicebox/writehtk.m
+     echo "Removing ${ROOTCFE}MAT/voicebox.zip"
+     rm ${ROOTCFE}MAT/voicebox.zip 
+
+else
+
+     # DOWNLOAD
+     echo "
+          Downloading $VOICEBOX_URL
+          " 
+     wget -P ${ROOTCFE}MAT/ $VOICEBOX_URL 
+     # CHECK FOR FAILED DOWNLOAD
+     if [ ! -e "${ROOTCFE}MAT/voicebox.zip" ];then
+         echo "
+               Download failed. Please download 
+
+               $VOICEBOX_URL
+
+               and store it into ${ROOTCFE}MAT/
+              " 
+         exit
+     fi 
+
+     # UNZIP
+     echo "Unzipping writehtk.m from ${ROOTCFE}MAT/voicebox.zip" 
+     if [ ! -f ${ROOTCFE}MAT/voicebox ];then 
+         mkdir ${ROOTCFE}MAT/voicebox
+     fi
+     unzip -p ${ROOTCFE}MAT/voicebox.zip writehtk.m > ${ROOTCFE}MAT/voicebox/writehtk.m
+     echo "Removing  ${ROOTCFE}MAT/voicebox.zip"
+     rm ${ROOTCFE}MAT/voicebox.zip 
+
+fi
+
+# STFT-UP TOOLS
+if [ -e "${ROOTCFE}MAT/stft_up_tools/" ];then
+
+     printf "%-15s %-40s  \033[92m downloaded \033[0m\n" "STFT-UP TOOLS" ${ROOTCFE}MAT/stft_up_tools/
+
+elif [ -e "${ROOTCFE}MAT/stft_up_tools-master" ];then
+
+     # RENAME 
+     echo "Renaming to ${ROOTCFE}MAT/stft_up_tools"
+     mv ${ROOTCFE}MAT/stft_up_tools-master ${ROOTCFE}MAT/stft_up_tools
+
+elif [ -e "${ROOTCFE}MAT/master.zip" ];then
+
+     # UNZIP
+     echo "Unzipping ${ROOTCFE}MAT/master.zip" 
+     unzip ${ROOTCFE}MAT/master.zip -d ${ROOTCFE}MAT/ 
+     echo "Removing ${ROOTCFE}MAT/master.zip"
+     rm ${ROOTCFE}MAT/master.zip 
+     # RENAME 
+     echo "Renaming to ${ROOTCFE}MAT/stft_up_tools"
+     mv ${ROOTCFE}MAT/stft_up_tools-master ${ROOTCFE}MAT/stft_up_tools
+
+else
+
+     # DOWNLOAD
+     echo "
+           Downloading $STFTUP_URL
+          " 
+     wget -P ${ROOTCFE}MAT/ $STFTUP_URL 
+     # CHECK FOR FAILED DOWNLOAD
+     if [ ! -e "${ROOTCFE}MAT/master.zip" ];then
+         echo "
+               Download failed. Please download 
+
+               $STFTUP_URL
+
+               and store it into ${ROOTCFE}MAT/
+              " 
+
+         exit
+     fi 
+
+     # UNZIP
+     echo "Unzipping ${ROOTCFE}MAT/master.zip" 
+     unzip ${ROOTCFE}MAT/master.zip -d ${ROOTCFE}MAT/ 
+     echo "Removing ${ROOTCFE}MAT/voicebox.zip"
+     rm ${ROOTCFE}MAT/master.zip 
+     # RENAME 
+     echo "Renaming to ${ROOTCFE}MAT/stft_up_tools"
+     mv ${ROOTCFE}MAT/stft_up_tools-master ${ROOTCFE}MAT/stft_up_tools
+
+fi
+
+# OBSUNC
+if [ -e "${ROOTCFE}PY/obsunc/" ];then
+
+     printf "%-15s %-40s  \033[92m downloaded \033[0m\n" "OBSUNC TOOLS" ${ROOTCFE}PY/obsunc/
+
+elif [ -e "${ROOTCFE}PY/obsunc-master" ];then
+
+     # RENAME 
+     echo "Renaming to ${ROOTCFE}PY/obsunc"
+     mv ${ROOTCFE}PY/obsunc-master ${ROOTCFE}PY/obsunc
+
+elif [ -e "${ROOTCFE}PY/master.zip" ];then
+
+     # UNZIP
+     echo "Unzipping ${ROOTCFE}PY/master.zip" 
+     unzip ${ROOTCFE}PY/master.zip -d ${ROOTCFE}PY/ 
+     echo "Removing ${ROOTCFE}PY/master.zip"
+     rm ${ROOTCFE}PY/master.zip 
+     # RENAME 
+     echo "Renaming to ${ROOTCFE}PY/obsunc"
+     mv ${ROOTCFE}PY/obsunc-master ${ROOTCFE}PY/obsunc
+
+else
+
+     # DOWNLOAD
+     echo "
+          Downloading $OBSUNC_URL
+          " 
+     wget -P ${ROOTCFE}PY/ $OBSUNC_URL 
+     # CHECK FOR FAILED DOWNLOAD
+     if [ ! -e "${ROOTCFE}PY/master.zip" ];then
+         echo "
+               Download failed. Please download 
+
+               $OBSUNC_URL
+
+               and store it into ${ROOTCFE}PY/
+              " 
+         exit
+     fi 
+
+     # UNZIP
+     echo "Unzipping ${ROOTCFE}PY/master.zip" 
+     unzip ${ROOTCFE}PY/master.zip -d ${ROOTCFE}PY/ 
+     echo "Removing ${ROOTCFE}PY/voicebox.zip"
+     rm ${ROOTCFE}PY/master.zip 
+     # RENAME 
+     echo "Renaming to ${ROOTCFE}PY/obsunc"
+     mv ${ROOTCFE}PY/obsunc-master ${ROOTCFE}PY/obsunc
+
+fi
+
+echo ""
