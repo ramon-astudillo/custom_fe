@@ -16,7 +16,7 @@ ROOTCFE=$(dirname "${BASH_SOURCE[0]}")/
 if [ -e "${ROOTCFE}MAT/voicebox/" ];then
 
      # DOWNLOADED
-     printf "%-15s %-40s  \033[92m downloaded \033[0m\n" "VOICEBOX" ${ROOTCFE}MAT/voicebox/
+     printf "%-15s\033[92m %-30s \033[0m\n" "VOICEBOX" ${ROOTCFE}MAT/voicebox/
 
 elif [ -e "${ROOTCFE}MAT/voicebox.zip" ];then
 
@@ -62,7 +62,8 @@ fi
 # STFT-UP TOOLS
 if [ -e "${ROOTCFE}MAT/stft_up_tools/" ];then
 
-     printf "%-15s %-40s  \033[92m downloaded \033[0m\n" "STFT-UP TOOLS" ${ROOTCFE}MAT/stft_up_tools/
+     # DOWNLOADED
+     printf "%-15s\033[92m %-30s \033[0m\n" "STFT-UP TOOLS" ${ROOTCFE}MAT/stft_up_tools/
 
 elif [ -e "${ROOTCFE}MAT/stft_up_tools-master" ];then
 
@@ -115,7 +116,8 @@ fi
 # OBSUNC
 if [ -e "${ROOTCFE}PY/obsunc/" ];then
 
-     printf "%-15s %-40s  \033[92m downloaded \033[0m\n" "OBSUNC TOOLS" ${ROOTCFE}PY/obsunc/
+     # DOWNLOADED
+     printf "%-15s\033[92m %-30s \033[0m\n" "OBSUNC TOOLS" ${ROOTCFE}PY/obsunc/
 
 elif [ -e "${ROOTCFE}PY/obsunc-master" ];then
 
