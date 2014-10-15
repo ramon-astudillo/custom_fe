@@ -58,11 +58,13 @@ else
     % with shorter tasks.    
     if ~isempty(config.noise_estimation)
         % If we use speech enhancement we will nedd a small initialization 
-        % segment at least. We pick here 500ms. 
+        % segment at least. We pick here 20ms. 
         t_init      = 0.02*config.fs;
         or_ref_mics = {{config.source_file t_init+1:length(y_t) 1:t_init 1}};
     else
-        
+        % Drop allways the first 500ms for coherence with IMCRA
+        t_init      = 0.02*config.fs;
+ %       or_ref_mics = {{config.source_file t_init+1:length(y_t) 1:t_init 1}};       
         or_ref_mics = {{config.source_file 1:length(y_t) [] 1}};
     end
 end
@@ -196,7 +198,6 @@ for i=1:length(or_ref_mics)
             % FEATURE EXTRACTION
             % Transform through the MFCCs
             [m_x,S_x] = mfcc_up(hat_X_LSA, zeros(size(hat_X_LSA)), config);
-            %[m_x,S_x] = mfcc_up(hat_X_W,MSE,config);
             % Append deltas, accelerations
             [m_x,S_x] = append_deltas_up(m_x,S_x,config.targetkind,...
                                          config.deltawindow,...
@@ -204,7 +205,19 @@ for i=1:length(or_ref_mics)
                                          config.simplediffs);
             % cms *only* in this segment
             [m_x,S_x] = cms_up(m_x,S_x);
-        
+
+        elseif strcmp(config.enhancement,'MFCC') 
+
+            % MFCC DOMAIN ENHANCEMENT
+            % Transform Wiener posterior through the MFCCs
+            [m_x,S_x] = mfcc_up(hat_X_W, MSE, config);
+            % Append deltas, accelerations
+            [m_x,S_x] = append_deltas_up(m_x,S_x,config.targetkind,...
+                                         config.deltawindow,...
+                                         config.accwindow,...
+                                         config.simplediffs);
+            % cms *only* in this segment
+            [m_x,S_x] = cms_up(m_x,S_x);
         else
             error('Unknown enhancement method %s', config.enhancement)
         end
