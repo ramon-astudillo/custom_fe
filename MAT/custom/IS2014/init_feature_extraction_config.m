@@ -98,38 +98,3 @@ config.dB_xi_min = -25;   % Minimum a priori SNR in dB
 config.imcra     = init_IMCRA(config.nfft/2+1);
 %
 config.alpha_d   = config.imcra.alpha_d;
-
-
-% %
-% % DIRHA CORPORA SPECIFIC ACTIONS
-% %
-% 
-% % If some DIRHA corpora specific action solicited in config, check if we
-% % have indeed DIRHA corpora.
-% if ~isempty(config.mic_sel) || ~isempty(config.vad)
-%     
-%     % Determine frequency of input data if not provided and determine if 
-%     % downsample needed
-%     if config.in_fs == -1
-%         [dum,dum,config.in_fs] = readaudio(htk_call.source_files{1},...
-%                                            config.byteorder, ...
-%                                            config.in_fs,config.fs);
-%     end
-%     if config.fs < config.in_fs
-%         downsample = config.fs/config.in_fs;
-%     else
-%         downsample = 0;
-%     end
-%     
-%     % Get the path identifying the simulation
-%     mdata  = regexp(htk_call.source_files{1}, ...
-%         '(?<root>.*)/(?<sim>\w+)/Signals/Mixed_Sources/.*', 'names', 'once');
-%     if isempty(mdata.sim)
-%         error(['You solicited DIRHA oracles by setting MIC_SEL or VAD' ...
-%             'in config but the file %d does not semm to be from a'
-%             ' a known DIRHA corpus'])
-%     end
-%     
-%     % Read the meta-data for the entire corpus
-%     config.dirha_or = readDIRHAmetadata(mdata.root, downsample);
-% end
