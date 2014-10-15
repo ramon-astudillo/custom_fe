@@ -260,10 +260,18 @@ if iscell(Features)
         % Write file in HTK format
         [dirn,basen,type]=fileparts(target_file);
         % Write a text file with vad information
-        writehtk([dirn '/' basen '.' num2str(c) type],Features{c}',config_FE.fp,config_FE.htk_format)
+        if ~isempty(dirn)
+            writehtk([dirn '/' basen '.' num2str(c) type],Features{c}',config_FE.fp,config_FE.htk_format)
+        else
+            writehtk([basen '.' num2str(c) type],Features{c}',config_FE.fp,config_FE.htk_format)
+        end
         if ~isempty(vad)
             [dirn,basen]=fileparts(target_file);
-            fid=fopen([dirn '/' basen '.' num2str(c) '.vad'],'w');
+            if ~isempty(dirn)
+                fid=fopen([dirn '/' basen '.' num2str(c) '.vad'],'w');
+            else
+                fid=fopen([basen '.' num2str(c) '.vad'],'w');
+            end
             fprintf(fid,'%s',vad{c});
             fclose(fid);
         end
