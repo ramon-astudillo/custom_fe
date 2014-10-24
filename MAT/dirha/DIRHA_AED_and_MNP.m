@@ -110,13 +110,6 @@ if strcmp(config.vad,'OracleTxt') || strcmp(config.vad,'OracleSeg')
     for c=1:length(or_ms)
         or_ref_mics{c} = oracle_vad(or_ms{c},config.vad);
     end
-
-% MLF-based boundaries
-elseif regexp(config.vad,'.*\.mlf')
-    if ~isempty(config.mic_sel)
-        error('MLFs can only be used with no oracle microphone selection')
-    end
-    or_ref_mics = ext_vad(or_ms,config.vad);
     
 % Whole signal
 else
@@ -312,20 +305,3 @@ else
                                 or_ms.src.bg_seg 1};
     end    
 end
-
-
-function or_ref_mics = ext_vad(source_file,target_file,fs,vad)
-
-% TODO: Generic support for corpora other than GRID DIRHA
-
-% Find the propper mlf for this set
-set = regexp(source_file, ...
-    'grid_dirha/(.*)/sim\d*/Signals/Mixed_Sources/.*', 'tokens', 'once');
-vad = strrep(vad,'*', set);
-% Extract VAD from it
-[sp_idx,bg_idx] = get_vad_idx_from_mlf(vad{1}, target_file, fs);
-or_ref_mics      = cell(length(sp_idx),1);
-for c = 1:length(sp_idx)
-    or_ref_mics{c} = {config.source_file,sp_idx{c},bg_idx{c},1};
-end
-

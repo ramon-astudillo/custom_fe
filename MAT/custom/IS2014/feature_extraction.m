@@ -38,7 +38,8 @@ function [x, vad] = feature_extraction(y_t, config)
 % DIRHA CORPORA ACOUSTIC EVENT DETECTION AND MICROPHONE NETWORK PROCESSING 
 %
 
-if ~isempty(config.mic_sel) || ~isempty(config.vad)
+if ~isempty(config.mic_sel) || (~isempty(config.vad)  && ...
+                                isempty(regexp(config.vad,'.*\.mlf')))
     
     % Check we are using a known DIRHA corpus
     if isempty(regexp(config.source_file, ...
@@ -51,6 +52,19 @@ if ~isempty(config.mic_sel) || ~isempty(config.vad)
     
     % Use DIRHA ORACLES to obtain a cell of different speech events
     or_ref_mics = DIRHA_AED_and_MNP(config);
+ 
+%
+% custom AED using an MLF 
+%    
+
+elseif ~isempty(regexp(config.vad,'.*\.mlf'))
+
+    or_ref_mics = AED_from_MLF(config);
+
+%
+% No Microphone Selection or AED
+%   
+    
 else
     % If no DIRHA meta-data used, assume only one speech event with current 
     % file and no background. This is *not* a good option for DIRHA data as 
