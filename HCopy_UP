@@ -161,7 +161,7 @@ Python binary
         fi
     fi 
     # CHECK FOLDER WITH PYTHON TOOLS EXISTS
-    HCo_py_PATH=$HCopy_UP_FOLDER/PY/speech_tools/interfaces/HCo.py          
+    HCo_py_PATH=$HCopy_UP_FOLDER/PY/obsunc/interfaces/HCo.py          
     if [ ! -f $HCo_py_PATH ];then
         error $0 $LINENO \
 "Python HCopy tools not found under
