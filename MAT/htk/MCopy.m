@@ -71,6 +71,9 @@ end
 
 % Read HTK config(s), specified with the -C option
 HTK_config = readhtkconfig(HTK_call.config_files);
+% Make first file available accessible inside init feature extraction.
+HTK_config.target_file = HTK_call.target_files{1};
+HTK_config.source_file = HTK_call.source_files{1};
 
 % Add custom features code, specified inside of the config file
 addpath(HTK_config.custom_feats_folder)
@@ -134,7 +137,7 @@ for i=1:total_files
     % READ AUDIO
     % Note that if DIRHA's microphone selection used, OTHER channels might
     % be read instead inside feature_extraction.m
-    if isempty(config_FE.mic_sel)
+    if isempty(config_FE.mlf_mic_sel)
         y_t = readaudio(HTK_call.source_files{i}, config_FE.byteorder,...
                         config_FE.in_fs, config_FE.fs);
     else

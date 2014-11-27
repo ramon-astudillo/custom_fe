@@ -1,0 +1,11 @@
+#
+# GRID-DIRHA CONFIGURATION
+#
+
+# Use MLF for Microphone Selection and Voice Activity Detection
+# note that <tokens> will be replaced by the appropiate value based on the
+# utterance's dirha parameters.
+MLF_MIC_ALIGN = mlfs/<dirha_lang>/Oracles/O3_DS.mlf 
+
+# Write each event into a different file
+SEPARATE_EVENTS = 1

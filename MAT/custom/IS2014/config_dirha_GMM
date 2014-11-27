@@ -1,9 +1,0 @@
-#
-# GRID-DIRHA CONFIGURATION
-#
-
-# Voice Activity Detection
-VAD = vad/labels/*_mixed_LA6_vad_nosil.mlf 
-
-# Write each event into a different file
-separate_events = 1
