@@ -284,9 +284,9 @@ else
     writehtk(target_file,Features',config_FE.fp,config_FE.htk_format)
     % Write a text file with vad information
     if ~isempty(vad)
-        [dirn,basen]=fileparts(target_file,'w');
-        fid = fopen([dirn basen '.vad']);
-        fprintf(fid,'%s',vad{1});
+        [dirn,basen]=fileparts(target_file);
+        fid = fopen([dirn '/' basen '.vad'], 'w');
+        fprintf(fid,'%s',vad);
         fclose(fid);
     end
 end
