@@ -67,8 +67,8 @@ else
     % utterances are very long. This option is left here for compatibility 
     % with shorter tasks.    
     % If we use speech enhancement we will nedd a small initialization 
-    % segment at least. We pick here 20ms. 
-    t_init    = 0.02*config.fs;
+    % segment at least.  
+    t_init    = config.init_time*config.fs;
     sp_events = {{config.source_file t_init+1:length(y_t) 1:t_init}};
 end
 
@@ -201,8 +201,12 @@ for i=1:length(sp_events)
                                  config.deltawindow,...
                                  config.accwindow,...
                                  config.simplediffs);
-    % cms *only* in this segment
-    [m_x,S_x] = cms_up(m_x,S_x);
+    if regexp(config.targetkind, '.*_Z_?')
+
+        % cms *only* in this segment
+        [m_x,S_x] = cms_up(m_x,S_x);
+
+    end
 
     %    
     % STORE FEATURES IN DIFFERENTE CELLS ALONG WITH TRANSCRIPTION INFO 
@@ -236,6 +240,10 @@ for i=1:length(sp_events)
 end
 
 % CONCATENATE EVERYTHING INTO A SINGLE FILE IF SOLICITED
-if ~config.separate_events
+if ~config.separate_events & length(x) > 1
     error('To be implemented')
+else
+    % If we have a single detection, store it directly  
+    x   = x{1};
+    vad = vad{1};
 end
