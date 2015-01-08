@@ -47,6 +47,7 @@ Extra_supp = struct(...
     'shift'              , NaN,...
     'nfft'               , NaN,...
     'byteorder_raw'      , 'littleendian',...
+    'init_time'          , 0.1,...
     'noise_estimation'   , '',...
     'iup'                , 0,...
     'enhancement'        , '',...
@@ -60,7 +61,6 @@ Extra_supp = struct(...
 % Complete config
 config = complete_defaults(config, HTK_supp, Extra_supp);
 
-
 %
 % READ MLF if provided
 %
@@ -71,26 +71,26 @@ elseif ~isempty(config.mlf_mic_sel)
     mlf_path = config.mlf_mic_sel; 
 elseif ~isempty(config.mlf_vad)
     mlf_path = config.mlf_vad;     
+else
+    mlf_path = '';
 end
 
-% DIRHA SPECIFIC PARSING OF MLF PATH
-% Try to retrieve DIRHA parameters. If sucessful check for special tokens in
-% mlf name and replace them and note that this is a dirha corpus
-[root, lang, set, sim, room, device, mic, typ, fs] ...
-    = get_dirha_path(config.source_file);
-if ~isempty(lang)
-    mlf_path     = strrep(mlf_path,'<dirha_lang>',upper(lang));
-    mlf_path     = strrep(mlf_path,'<dirha_sets>',set);
+if ~isempty(mlf_path)
+    % DIRHA SPECIFIC PARSING OF MLF PATH
+    % Try to retrieve DIRHA parameters. If sucessful check for special tokens in
+    % mlf name and replace them and note that this is a dirha corpus
+    [root, lang, set, sim, room, device, mic, typ, fs] ...
+        = get_dirha_path(config.source_file);
+    if ~isempty(lang)
+        mlf_path     = strrep(mlf_path,'<dirha_lang>',upper(lang));
+        mlf_path     = strrep(mlf_path,'<dirha_sets>',set);
+    end
+    config.mlf_trans = readmlf(mlf_path);
 end
-config.mlf_trans = readmlf(mlf_path);
-
-
 
 %
 % FEATURE EXTRACTION
 %
-
-
 
 % Initialize MFCCs (compute Mel-fiterbank and DCT matrices)
 [config.W,config.T]  = init_mfcc_HTK(config);
