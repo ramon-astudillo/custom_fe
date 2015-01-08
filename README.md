@@ -17,21 +17,14 @@ provided to implement Uncertainty Decoding and Modified Imputation in HTK.
 
 **Instalation of Matlab Tools**
 
-The wrapper makes use of two external toolboxes. The voicebox toolbox
+The wrapper makes use of two external toolboxes, the voicebox toolbox and the 
+stft_up_tools. Both are downloaded automatically by using
 
-    cd ./MAT/
-    wget http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.zip
-    unzip voicebox.zip -d voicebox
+    ./custom_fe/install
 
-and the stft_up_tools
-
-    wget https://github.com/ramon-astudillo/stft_up_tools/archive/master.zip
-    unzip master.zip
-    mv stft_up_tools-master stft_up_tools
-
-Depending on your platform wget might not be available. You can always 
-download them with a browser. Note also that from the voicebox toolbox, only 
-the writehtk.m function is used.  
+This uses wget which depending on your platform might not be available. The
+script will ask you to download them with a browser in this case. Note also 
+that, from the voicebox toolbox, only the writehtk.m function is used.  
 
 If matlab is available on your bin, this should be enough. If not, you can edit
 line 33 of HCopy_UP to indicate a MATLAB_PATH variable.
