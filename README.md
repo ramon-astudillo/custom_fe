@@ -27,7 +27,7 @@ script will ask you to download them with a browser in this case. Note also
 that, from the voicebox toolbox, only the writehtk.m function is used.  
 
 If matlab is available on your bin, this should be enough. If not, you can edit
-line 33 of HCopy_UP to indicate a MATLAB_PATH variable.
+HCopy_UP and set the MATLAB_PATH variable pointing to your binary.
 
 **Test Using the GRID-DIRHA Baseline Front-End**
 
