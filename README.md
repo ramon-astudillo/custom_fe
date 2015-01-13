@@ -54,9 +54,9 @@ exit or it will close Matlab after each run!.
 
 **Using Features with Observation Uncertainty**
 
-HCopy_UP can be used together with front-ends that produce not only features but also a measure of uncertainty. For example for the front-end above this can be attained using the -up flag.  
+HCopy_UP can be used together with front-ends that produce not only features but also a measure of uncertainty. For example for the front-end above this can be attained using the -up flag together with the config using the MMSE-MFCC estimator (config_IS2014M) as 
 
-    ./custom_fe/HCopy_UP MAT -C ./custom_fe/MAT/custom/IS2014/config_IS2014 \
+    ./custom_fe/HCopy_UP MAT -C ./custom_fe/MAT/custom/IS2014/config_IS2014M \
                          ./custom_fe/MAT/stft_up_tools/DATA/s29_pbiz6p.wav \
                          ./s29_pbiz6p.mfc \
                          -up
