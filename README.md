@@ -42,7 +42,7 @@ beamforming or Oracle Voice Activity Detection on DIRHA-corpora, see
 
 Once the Matlab tools are instaled you can do a test run with
 
-    ./custom_fe/HCopy_UP MAT -C ./custom_fe/MAT/custom/IS2014/config_MFCC \
+    ./custom_fe/HCopy_UP MAT -C ./custom_fe/MAT/custom/IS2014/config_IS2014 \
                          ./custom_fe/MAT/stft_up_tools/DATA/s29_pbiz6p.wav \
                          ./s29_pbiz6p.mfc \
                          -debug
