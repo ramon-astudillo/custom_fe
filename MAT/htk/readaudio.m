@@ -47,9 +47,13 @@ if regexp(type,'\.wav$')
 % RAW
 % Admits raw1, raw2. Useful for WSJ0 extraction (wv1, wv2 formats)     
 elseif regexp(type,'\.raw[0-9]?$')
-    if in_fs == -1
+    if out_fs == -1
         error('For raw data is obligatory to specify sample frequency')
     end
+    % If not in_fs given it is assumed to be the work one
+    if in_fs == -1
+        in_fs = out_fs;
+    end 
     if strcmp(byteorder, 'NONVAX')
         fid = fopen(audio_file,'r', 'b');
     elseif strcmp(byteorder, 'VAX')
@@ -57,13 +61,11 @@ elseif regexp(type,'\.raw[0-9]?$')
     else
         error('Unknown config.machineformat %s', byteorder)
     end
- 
     if fid == -1
         error('File %s could not be opened or found', audio_file)
     end
     x = fread(fid,inf,'int16');
     fclose(fid);
-    fs = [];
 else
     error('Unknown file type in %s',audio_file)
 end
