@@ -8,11 +8,13 @@
 VOICEBOX_URL=http://www.ee.ic.ac.uk/hp/staff/dmb/voicebox/voicebox.zip
 STFTUP_URL=https://github.com/ramon-astudillo/stft_up_tools/archive/master.zip
 OBSUNC_URL=https://github.com/ramon-astudillo/obsunc/archive/master.zip
+KALDI_TO_MATLAB_URL=http://kaldi-to-matlab.gforge.inria.fr/kaldi-to-matlab.tar.gz
 
 # Locate the root of the custom_fe toolbox
 ROOTCFE=$(dirname "${BASH_SOURCE[0]}")/ 
 
 # VOICEBOX'S WRITEHTK
+echo ""
 if [ -e "${ROOTCFE}MAT/voicebox/" ];then
 
      # DOWNLOADED
@@ -58,6 +60,56 @@ else
      rm ${ROOTCFE}MAT/voicebox.zip 
 
 fi
+
+# KALDI-TO-MATLABS'S WRITEKALDIFEATURES 
+if [ -e "${ROOTCFE}MAT/kaldi-to-matlab/" ];then
+
+     # DOWNLOADED
+     printf "%-15s\033[92m %-30s \033[0m\n" "KALDI-TO-MATLAB" ${ROOTCFE}MAT/kaldi-to-matlab/
+
+elif [ -e "${ROOTCFE}MAT/kaldi-to-matlab.tar.gz" ];then
+
+     # UNZIP
+     echo "Unzipping writekaldifeatures.m from ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz" 
+     if [ ! -f ${ROOTCFE}MAT/kaldi-to-matlab ];then 
+         mkdir ${ROOTCFE}MAT/kaldi-to-matlab 
+     fi
+     gunzip -p ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz
+     tar -xvf ${ROOTCFE}MAT/kaldi-to-matlab.tar ${ROOTCFE}MAT/kaldi-to-matlab/writekaldifeatures.m
+     echo "Removing ${ROOTCFE}MAT/kaldi-to-matlab.tar"
+     rm ${ROOTCFE}MAT/kaldi-to-matlab.tar 
+
+else
+
+     # DOWNLOAD
+     echo "
+          Downloading $KALDI_TO_MATLAB_URL
+          " 
+     wget -P ${ROOTCFE}MAT/ $KALDI_TO_MATLAB_URL
+     # CHECK FOR FAILED DOWNLOAD
+     if [ ! -e "${ROOTCFE}MAT/kaldi-to-matlab.tar.gz" ];then
+         echo "
+               Download failed. Please download 
+
+               $KALDI_TO_MATLAB_URL
+
+               and store it into ${ROOTCFE}MAT/
+              " 
+         exit
+     fi 
+
+     # UNZIP
+     echo "Unzipping writehtk.m from ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz" 
+     if [ ! -f ${ROOTCFE}MAT/kaldi-to-matlab ];then 
+         mkdir ${ROOTCFE}MAT/kaldi-to-matlab
+     fi
+     gunzip -p ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz
+     tar -xvf ${ROOTCFE}MAT/kaldi-to-matlab.tar ${ROOTCFE}MAT/kaldi-to-matlab/writekaldifeatures.m
+     echo "Removing  ${ROOTCFE}MAT/kaldi-to-matlab.tar"
+     rm ${ROOTCFE}MAT/kaldi-to-matlab.tar 
+
+fi
+
 
 # STFT-UP TOOLS
 if [ -e "${ROOTCFE}MAT/stft_up_tools/" ];then
@@ -105,7 +157,7 @@ else
      # UNZIP
      echo "Unzipping ${ROOTCFE}MAT/master.zip" 
      unzip ${ROOTCFE}MAT/master.zip -d ${ROOTCFE}MAT/ 
-     echo "Removing ${ROOTCFE}MAT/voicebox.zip"
+     echo "Removing ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz"
      rm ${ROOTCFE}MAT/master.zip 
      # RENAME 
      echo "Renaming to ${ROOTCFE}MAT/stft_up_tools"
@@ -158,7 +210,7 @@ else
      # UNZIP
      echo "Unzipping ${ROOTCFE}PY/master.zip" 
      unzip ${ROOTCFE}PY/master.zip -d ${ROOTCFE}PY/ 
-     echo "Removing ${ROOTCFE}PY/voicebox.zip"
+     echo "Removing ${ROOTCFE}PY/master.zip"
      rm ${ROOTCFE}PY/master.zip 
      # RENAME 
      echo "Renaming to ${ROOTCFE}PY/obsunc"
@@ -167,3 +219,4 @@ else
 fi
 
 echo ""
+echo "Note that Kaldi-to-matlab needs copy-feats to be avaliable in your path"
