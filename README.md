@@ -3,8 +3,8 @@ custom_fe
 
 HCopy_UP is a bash wrapper for a custom front-end usable with HTK and Kaldi. It
 imitates HCopy's functionality but calls Matlab or Python code instead. This
-allows to easily create custom front-ends that write the features in HTK 
-format and can be therefore incorporated to the multiple HTK/Kaldi recipes
+allows to easily create custom front-ends that write the features in HTK or 
+Kaldi format and can be therefore incorporated to the multiple HTK/Kaldi recipes
 available with minor changes.
 
 Since the wrapper is in bash, its use is limited do unix and cygwin 
@@ -17,14 +17,21 @@ provided to implement Uncertainty Decoding and Modified Imputation in HTK.
 
 **Instalation of Matlab Tools**
 
-The wrapper makes use of two external toolboxes, the voicebox toolbox and the 
-stft_up_tools. Both are downloaded automatically by using
+If you download the zip manually, you can rename the tools as
+
+    mv ./custom_fe-master ./custom_fe
+
+Not that it matters, just a question of aesthetics
+
+The wrapper makes use of various external toolboxes, the voicebox toolbox and
+the kaldi-to-matlab toolboxes and the stft_up_tools. They can be downloaded 
+automatically by using
 
     ./custom_fe/install
 
 This uses wget which depending on your platform might not be available. The
 script will ask you to download them with a browser in this case. Note also 
-that, from the voicebox toolbox, only the writehtk.m function is used.  
+that only the needed tools are unzipped.   
 
 If matlab is available on your bin, this should be enough. If not, you can edit
 HCopy_UP and set the MATLAB_PATH variable pointing to your binary.
