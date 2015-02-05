@@ -57,8 +57,9 @@
 function MCopy(HCopy_UP_FOLDER,HCopy_args)
 
 % Add code for basic utilities
-addpath([HCopy_UP_FOLDER '/voicebox/']) % HTK tools from the voicebox tools
-addpath([HCopy_UP_FOLDER '/htk/'])      % Other HTK tools
+addpath([HCopy_UP_FOLDER '/voicebox/'])        % HTK tools from the voicebox tools
+addpath([HCopy_UP_FOLDER '/htk/'])             % Other HTK tools
+addpath([HCopy_UP_FOLDER '/kaldi-to-matlab/']) %  Tools for Kaldi 
 
 % Parse HTK call
 HTK_call    = parse_HTK_args(HCopy_args);
@@ -151,7 +152,13 @@ for i=1:total_files
     [Features, vad]       = feature_extraction(y_t, config_FE);
     
     % WRITE FILES IN HTK FORMAT 
-    writefeatures(Features, vad, config_FE, HTK_call.target_files{i});
+    if strcmp(config_FE.targetformat, 'HTK')
+        writehtkfeatures(Features, vad, config_FE, HTK_call.target_files{i});
+    elseif strcmp(config_FE.targetformat, 'KALDI')
+        writekaldifeatures(Features, HTK_call.target_files{i});
+    else
+        error('Unknown TARGETFORMAT %s', config_FE.targetformat)
+    end
     
     % INFORM USER
     n_files = n_files+1;
@@ -255,7 +262,7 @@ end
 % element of the cell. If vad not empty write beginning and end for each 
 % file
 
-function writefeatures(Features, vad, config_FE, target_file)
+function writehtkfeatures(Features, vad, config_FE, target_file)
 
 
 if iscell(Features)
