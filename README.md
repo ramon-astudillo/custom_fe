@@ -39,10 +39,6 @@ that only the needed functions are unzipped.
 If matlab is available on your bin, this should be enough. If not, you can edit
 HCopy_UP and set the MATLAB_PATH variable pointing to your binary.
 
-**Uncertainty Propagation and Observation Uncertainty Baselines**
-
-
-
 
 **Test Using the GRID-DIRHA Baseline Front-End**
 
