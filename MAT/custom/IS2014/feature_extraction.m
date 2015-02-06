@@ -1,6 +1,11 @@
 % function x = feature_extraction(y_t, config)
 %
 % This an example function for signal processing + feature extraction 
+% implementing the feature extraction in
+%
+% M. Matassoni, R. F. Astudillo, A. Katsamanis, M. Ravanelli "The DIRHA-GRID 
+% corpus: baseline and tools for multi-room distant speech recognition using 
+% distributed microphones", Interspeech 2014
 %
 % Input:  y_t       [T, C] matrix of C channels containing time domain signals
 %                   of T samples
@@ -11,8 +16,12 @@
 % Input:  config    Structure containing information pre-computed at 
 %                   init_feature_extraction_config.m and previous stages
 % 
-% Output: Features  [I, L] matrix containing features. I is the number of 
-%                   features and L the number of analysis frames. 
+% Output: x         [I, L] matrix containing features. I is the number of 
+%                   features and L the number of analysis frames. if 
+%                   separate_events = 1 x is a cell containing features for 
+%                   each event 
+%
+% Outout: vad       string containing extra information. 
 %
 %
 % DIRHA-CORPORA: 

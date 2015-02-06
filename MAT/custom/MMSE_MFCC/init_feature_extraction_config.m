@@ -63,33 +63,6 @@ Extra_supp = struct(...
 config = complete_defaults(config, HTK_supp, Extra_supp);
 
 %
-% READ MLF if provided
-%
-
-if ~isempty(config.mlf_mic_align)
-    mlf_path = config.mlf_mic_align;    
-elseif ~isempty(config.mlf_mic_sel)
-    mlf_path = config.mlf_mic_sel; 
-elseif ~isempty(config.mlf_vad)
-    mlf_path = config.mlf_vad;     
-else
-    mlf_path = '';
-end
-
-if ~isempty(mlf_path)
-    % DIRHA SPECIFIC PARSING OF MLF PATH
-    % Try to retrieve DIRHA parameters. If sucessful check for special tokens in
-    % mlf name and replace them and note that this is a dirha corpus
-    [root, lang, set, sim, room, device, mic, typ, fs] ...
-        = get_dirha_path(config.source_file);
-    if ~isempty(lang)
-        mlf_path     = strrep(mlf_path,'<dirha_lang>',upper(lang));
-        mlf_path     = strrep(mlf_path,'<dirha_set>',set);
-    end
-    config.mlf_trans = readmlf(mlf_path);
-end
-
-%
 % FEATURE EXTRACTION
 %
 
