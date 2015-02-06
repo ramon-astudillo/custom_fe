@@ -10,7 +10,7 @@ function HTK_config = complete_defaults(HTK_config, HTK_supp, Extra_supp)
 
     % SAMPLING FREQUENCY EITHER IN HTK OR NORMAL FORMAT 
     if isfield(HTK_config, 'sourcerate')
-        HTK_config.in_fs = floor(1e7/HTK_config.sourcerate);
+        HTK_config.fs = floor(1e7/HTK_config.sourcerate);
     elseif ~isfield(HTK_config, 'fs')
         error('You need either to specifiy SOURCERATE or fs')
     end

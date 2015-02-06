@@ -155,7 +155,10 @@ for i=1:total_files
     if strcmp(config_FE.targetformat, 'HTK')
         writehtkfeatures(Features, vad, config_FE, HTK_call.target_files{i});
     elseif strcmp(config_FE.targetformat, 'KALDI')
-        writekaldifeatures(Features, HTK_call.target_files{i});
+        features                  = struct('utt',cell(1),'feature',cell(1));
+        features.utt{1}     = HTK_call.target_files{i};
+        features.feature{1} = Features;
+        writekaldifeatures(features, HTK_call.target_files{i});
     else
         error('Unknown TARGETFORMAT %s', config_FE.targetformat)
     end
