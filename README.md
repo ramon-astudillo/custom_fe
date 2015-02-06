@@ -15,26 +15,34 @@ Windows. See the Matlab case as an example.
 The wrappers also support observation uncertainty techniques. Patches are also
 provided to implement Uncertainty Decoding and Modified Imputation in HTK.
 
-**Instalation of Matlab Tools**
+**Instalation of Matlab Tools from the zip**
 
-If you download the zip manually, you can rename the tools as
+If you are familiar with Git, the best way to use these tools is to fork and 
+clone the repo from Github. The other alternative is to download the zip 
+manually (right side of the screen on Github). In that case you can rename the
+unzipped tools as
 
     mv ./custom_fe-master ./custom_fe
 
-Not that it matters, just a question of aesthetics
+It should work anyway, it is more a matter of aethetics.
 
-The wrapper makes use of various external toolboxes, the voicebox toolbox and
-the kaldi-to-matlab toolboxes and the stft_up_tools. They can be downloaded 
-automatically by using
+The wrapper makes use of various external toolboxes, Mike Brooke's voicebox 
+toolbox, Emmanuel Vincent's kaldi-to-matlab toolboxe and my stft_up_tools. 
+They are downloaded automatically by using
 
     ./custom_fe/install
 
 This uses wget which depending on your platform might not be available. The
 script will ask you to download them with a browser in this case. Note also 
-that only the needed tools are unzipped.   
+that only the needed functions are unzipped.   
 
 If matlab is available on your bin, this should be enough. If not, you can edit
 HCopy_UP and set the MATLAB_PATH variable pointing to your binary.
+
+**Uncertainty Propagation and Observation Uncertainty Baselines**
+
+
+
 
 **Test Using the GRID-DIRHA Baseline Front-End**
 

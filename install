@@ -220,3 +220,4 @@ fi
 
 echo ""
 echo "Note that Kaldi-to-matlab needs copy-feats to be avaliable in your path"
+echo ""
