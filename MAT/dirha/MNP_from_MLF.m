@@ -90,9 +90,11 @@ elseif strcmp(sel_type,'mic_sel')
         % Get room device and mic name from selected mic
         [dum, dum, dum, dum, broom, bdevice, bmic] = get_dirha_path(trans(i).name);                            
         if strcmp(lang,'grid')
-            lang = [lang '_dirha'];
-        end
-        best_mic = [root '/' lang '/' sets '/sim' sim '/Signals/Mixed_Sources/' broom '/' bdevice '/' bmic '.wav'];
+            dbname = [lang '_dirha'];   
+        else  
+            dbname = ['DIRHA_sim2/' lang];             
+        end   
+        best_mic = [root '/' dbname '/' sets '/sim' sim '/Signals/Mixed_Sources/' broom '/' bdevice '/' bmic '.wav'];
         
         % Loop over events in mic and add them with the time boundaries
         for j=1:length(trans(i).word)
@@ -147,8 +149,10 @@ elseif strcmp(sel_type,'align')
         % Construct current mic path from source and transcription
         [dum, dum, dum, dum, broom, bdevice, bmic] = get_dirha_path(trans(i).name);                            
         if strcmp(lang,'grid')
-            dbname = [lang '_dirha'];
-        end
+            dbname = [lang '_dirha'];   
+        else  
+            dbname = ['DIRHA_sim2/' lang];             
+        end   
         curr_mic = [root '/' dbname '/' sets '/sim' sim '/Signals/Mixed_Sources/' broom '/' bdevice '/' bmic '.wav'];
         
         % Loop over events in current mic and add them with the time boundaries

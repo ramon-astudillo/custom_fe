@@ -84,7 +84,7 @@ if ~isempty(mlf_path)
         = get_dirha_path(config.source_file);
     if ~isempty(lang)
         mlf_path     = strrep(mlf_path,'<dirha_lang>',upper(lang));
-        mlf_path     = strrep(mlf_path,'<dirha_sets>',set);
+        mlf_path     = strrep(mlf_path,'<dirha_set>',set);
     end
     config.mlf_trans = readmlf(mlf_path);
 end

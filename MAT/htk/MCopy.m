@@ -295,7 +295,11 @@ else
     % Write a text file with vad information
     if ~isempty(vad)
         [dirn,basen]=fileparts(target_file);
-        fid = fopen([dirn '/' basen '.vad'], 'w');
+        if isempty(dirn)
+            fid = fopen([basen '.vad'], 'w');
+        else
+            fid = fopen([dirn '/' basen '.vad'], 'w');
+        end
         fprintf(fid,'%s',vad);
         fclose(fid);
     end

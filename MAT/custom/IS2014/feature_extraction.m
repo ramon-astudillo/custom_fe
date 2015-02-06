@@ -228,7 +228,7 @@ for i=1:length(sp_events)
         % replace device and mic name by asterisk
         mic_regexp = strrep(sp_events{i}{1}{1},['/' device '/'],'/*/');    
         mic_regexp = strrep(mic_regexp,['/' mic '.'],'/*.');    
-        vad{i} = sprintf('"%s"\n%d %d speech.%d\n.\n', sp_events{i}{1}{1},...
+        vad{i} = sprintf('"%s"\n%d %d speech.%d\n.\n', mic_regexp,...
                          round(sp_events{i}{1}{2}(1)/config.fs*1e7),...
                          round(sp_events{i}{1}{2}(end)/config.fs*1e7),i);
 
@@ -241,8 +241,15 @@ end
 
 % CONCATENATE EVERYTHING INTO A SINGLE FILE IF SOLICITED
 if ~config.separate_events & length(x) > 1
-    error('To be implemented')
-else
+    x_tmp   = [];
+    vad_tmp = '';
+    for i=1:length(x)
+        x_tmp   = [x_tmp, x{i}];
+        vad_tmp = [vad_tmp, vad{i}];
+    end 
+    x   = x_tmp;
+    vad = vad_tmp;
+elseif length(x) == 1
     % If we have a single detection, store it directly  
     x   = x{1};
     vad = vad{1};
