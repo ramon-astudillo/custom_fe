@@ -19,7 +19,7 @@ BYTEORDER = VAX
 # CUSTOM FEATURES CONFIGURATION
 #
 
-MMSE_METHOD = STSA # Wiener, LSA, STSA, PSD, MFCC
+MMSE_METHOD = STSA # Wiener, LSA, STSA, STSP, MFCC
 
 # You need to indicate where is the code folder of the feature extraction, 
 # either directly through 
