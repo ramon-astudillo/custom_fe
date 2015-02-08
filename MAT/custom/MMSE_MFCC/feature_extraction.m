@@ -30,6 +30,13 @@
 function [x, vad] = feature_extraction(y_t, config)
 
 %
+% BEAMFORMING
+%
+
+% Just a simple delay and sum pointing at the middle
+y_t = sum(y_t, 2);
+
+%
 % SPEECH ENHANCEMENT WITH A WIENER FILTER
 %
 
@@ -43,10 +50,10 @@ config.IS = floor(config.init_time*config.fs/config.shift);
 % Get sizes
 [K,L]   = size(Y);
 % This will hold the Wiener estimated clean speech
-hat_X_W = zeros(K,L);
+hat_XcY = zeros(K,L);
 % This will hold the residual estimation uncertainty, in other words
 % the variance of the Wiener posterior
-MSE     = zeros(size(Y));
+Lambda_XcY = zeros(size(Y));
 % Initialize noise power
 config.imcra.Lambda_D = abs(Y(:,1).^2);
 % Initialize Gain and a posteriori SNR
@@ -55,20 +62,26 @@ Gamma            = GH1;
 % Loop over frames
 for l=1:L
     % A posteriori SNR
-    new_Gamma    = (abs(Y(:,l)).^2)./config.imcra.Lambda_D;   
+    new_Gamma = (abs(Y(:,l)).^2)./config.imcra.Lambda_D;   
     % Decision directed a priori SNR estimation, with lower bound
-    xi           = config.alpha*(GH1.^2).*Gamma ... 
-                 + (1-config.alpha)*max(new_Gamma-1,0);  
-    xi           = max(xi,10^(config.dB_xi_min/20));
+    xi        = config.alpha*(GH1.^2).*Gamma ... 
+              + (1-config.alpha)*max(new_Gamma-1,0);  
+    xi        = max(xi,10^(config.dB_xi_min/20));
     % Update Gamma
-    Gamma        = new_Gamma;
+    Gamma     = new_Gamma;
     % WIENER Gain
-    GH1          = xi./(1+xi);
-    % WIENER Posterior
+    GH1       = xi./(1+xi);
     % Mean (Wiener filter)
-    hat_X_W(:,l) = GH1.*Y(:,l);
+    hat_X_W   = GH1.*Y(:,l);
     % Variance (residual MSE)
-    MSE(:,l)  = GH1.*config.imcra.Lambda_D;
+    MSE       = GH1.*config.imcra.Lambda_D;
+    % Linear/Non-linear estimators from WIENER Posterior
+    [hat_x, Lambda_x]               = nlup(hat_X_W,MSE,config.mmse_method);
+    % Get STFT estimate by composing non-linear estimates and the phase 
+    % estimate
+    [hat_XcY(:,l), Lambda_XcY(:,l)] = comp_mmse(hat_x, Lambda_x, ...
+                                                angle(Y(:,l)), ...
+                                                config.mmse_method); 
 
     % SNR ESTIMATION (I), yes it is done in this order
     % IMCRA estimation of noise variance
@@ -79,9 +92,14 @@ end
 % FEATURE EXTRACTION / UNCERTAINTY PROPAGATION
 %
 
+% Unless we are computing the MMSE-MFCC
+if ~strcmp(config.mmse_method,'MFCC')
+    Lambda_XcY = zeros(size(Lambda_XcY));
+end
+
 % MFCC DOMAIN ENHANCEMENT
 % Transform Wiener posterior through the MFCCs
-[m_x,S_x] = mfcc_up(hat_X_W, MSE, config);
+[m_x,S_x] = mfcc_up(hat_XcY, Lambda_XcY, config);
 % Append deltas, accelerations
 [m_x,S_x] = append_deltas_up(m_x,S_x,config.targetkind, config.deltawindow, ...
                              config.accwindow, config.simplediffs);

@@ -19,6 +19,8 @@ BYTEORDER = VAX
 # CUSTOM FEATURES CONFIGURATION
 #
 
+MMSE_METHOD = MFCC  # Wiener, LSA, STSA, PSD, MFCC
+
 # You need to indicate where is the code folder of the feature extraction, 
 # either directly through 
 # CUSTOM_FEATS_FOLDER = /your/path/eg/mymfccs/ 
