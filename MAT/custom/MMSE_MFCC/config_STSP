@@ -1,0 +1,28 @@
+#
+# HTK Configuration
+#
+
+TARGETKIND = MFCC_0_D_A_Z
+DELTAWINDOW = 3
+ACCWINDOW = 2
+TARGETRATE = 100000.0
+SOURCERATE = 625.0
+WINDOWSIZE = 250000.0
+USEHAMMING = T
+PREEMCOEF = 0.97
+NUMCHANS = 23
+CEPLIFTER = 1
+NUMCEPS = 12
+BYTEORDER = VAX
+
+#
+# CUSTOM FEATURES CONFIGURATION
+#
+
+MMSE_METHOD = STSP # Wiener, LSA, STSA, STSP, MFCC
+
+# You need to indicate where is the code folder of the feature extraction, 
+# either directly through 
+# CUSTOM_FEATS_FOLDER = /your/path/eg/mymfccs/ 
+# Or indicating that it is the folder were this config file resides by setting
+CFF_FROM_CONFIG_PATH = T
