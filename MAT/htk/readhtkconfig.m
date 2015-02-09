@@ -30,7 +30,7 @@ for c = 1:length(config_path_cell)
         error('Could not open config file %s',config_path)
     end
     % EXTRACT ARGUMENT AND VALUE
-    items = regexp(config_text,'([^\n]+)=([^\n]*)\n','tokens');
+    items = regexp(config_text,'([^\n]+)=([^\n]*)\n?','tokens');
     % PROCESS ARGUMENT VALUE ONE BY ONE
     for i=1:length(items)
         % IGNORE COMMENTS
