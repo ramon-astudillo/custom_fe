@@ -37,7 +37,7 @@ else
      echo "
           Downloading $VOICEBOX_URL
           " 
-     wget -P ${ROOTCFE}MAT/ $VOICEBOX_URL 
+     wget -P ${ROOTCFE}MAT/ $VOICEBOX_URL -O ${ROOTCFE}MAT/voicebox.zip 
      # CHECK FOR FAILED DOWNLOAD
      if [ ! -e "${ROOTCFE}MAT/voicebox.zip" ];then
          echo "
@@ -85,7 +85,7 @@ else
      echo "
           Downloading $KALDI_TO_MATLAB_URL
           " 
-     wget -P ${ROOTCFE}MAT/ $KALDI_TO_MATLAB_URL
+     wget -P ${ROOTCFE}MAT/ $KALDI_TO_MATLAB_URL -O ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz
      # CHECK FOR FAILED DOWNLOAD
      if [ ! -e "${ROOTCFE}MAT/kaldi-to-matlab.tar.gz" ];then
          echo "
@@ -140,7 +140,7 @@ else
      echo "
            Downloading $STFTUP_URL
           " 
-     wget -P ${ROOTCFE}MAT/ $STFTUP_URL 
+     wget -P ${ROOTCFE}MAT/ $STFTUP_URL -O ${ROOTCFE}MAT/master.zip 
      # CHECK FOR FAILED DOWNLOAD
      if [ ! -e "${ROOTCFE}MAT/master.zip" ];then
          echo "
@@ -194,7 +194,7 @@ else
      echo "
           Downloading $OBSUNC_URL
           " 
-     wget -P ${ROOTCFE}PY/ $OBSUNC_URL 
+     wget -P ${ROOTCFE}PY/ $OBSUNC_URL -O ${ROOTCFE}PY/master.zip 
      # CHECK FOR FAILED DOWNLOAD
      if [ ! -e "${ROOTCFE}PY/master.zip" ];then
          echo "
