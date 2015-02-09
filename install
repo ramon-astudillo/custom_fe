@@ -74,7 +74,7 @@ elif [ -e "${ROOTCFE}MAT/kaldi-to-matlab.tar.gz" ];then
      if [ ! -f ${ROOTCFE}MAT/kaldi-to-matlab ];then 
          mkdir ${ROOTCFE}MAT/kaldi-to-matlab 
      fi
-     gunzip -p ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz
+     gunzip -f ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz
      tar -xvf ${ROOTCFE}MAT/kaldi-to-matlab.tar ${ROOTCFE}MAT/kaldi-to-matlab/writekaldifeatures.m
      echo "Removing ${ROOTCFE}MAT/kaldi-to-matlab.tar"
      rm ${ROOTCFE}MAT/kaldi-to-matlab.tar 
