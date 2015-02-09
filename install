@@ -165,58 +165,58 @@ else
 
 fi
 
-# OBSUNC
-if [ -e "${ROOTCFE}PY/obsunc/" ];then
-
-     # DOWNLOADED
-     printf "%-15s\033[92m %-30s \033[0m\n" "OBSUNC TOOLS" ${ROOTCFE}PY/obsunc/
-
-elif [ -e "${ROOTCFE}PY/obsunc-master" ];then
-
-     # RENAME 
-     echo "Renaming to ${ROOTCFE}PY/obsunc"
-     mv ${ROOTCFE}PY/obsunc-master ${ROOTCFE}PY/obsunc
-
-elif [ -e "${ROOTCFE}PY/master.zip" ];then
-
-     # UNZIP
-     echo "Unzipping ${ROOTCFE}PY/master.zip" 
-     unzip ${ROOTCFE}PY/master.zip -d ${ROOTCFE}PY/ 
-     echo "Removing ${ROOTCFE}PY/master.zip"
-     rm ${ROOTCFE}PY/master.zip 
-     # RENAME 
-     echo "Renaming to ${ROOTCFE}PY/obsunc"
-     mv ${ROOTCFE}PY/obsunc-master ${ROOTCFE}PY/obsunc
-
-else
-
-     # DOWNLOAD
-     echo "
-          Downloading $OBSUNC_URL
-          " 
-     wget -P ${ROOTCFE}PY/ $OBSUNC_URL -O ${ROOTCFE}PY/master.zip 
-     # CHECK FOR FAILED DOWNLOAD
-     if [ ! -e "${ROOTCFE}PY/master.zip" ];then
-         echo "
-               Download failed. Please download 
-
-               $OBSUNC_URL
-
-               and store it into ${ROOTCFE}PY/
-              " 
-         exit
-     fi 
-
-     # UNZIP
-     echo "Unzipping ${ROOTCFE}PY/master.zip" 
-     unzip ${ROOTCFE}PY/master.zip -d ${ROOTCFE}PY/ 
-     echo "Removing ${ROOTCFE}PY/master.zip"
-     rm ${ROOTCFE}PY/master.zip 
-     # RENAME 
-     echo "Renaming to ${ROOTCFE}PY/obsunc"
-     mv ${ROOTCFE}PY/obsunc-master ${ROOTCFE}PY/obsunc
-
-fi
+## OBSUNC
+#if [ -e "${ROOTCFE}PY/obsunc/" ];then
+#
+#     # DOWNLOADED
+#     printf "%-15s\033[92m %-30s \033[0m\n" "OBSUNC TOOLS" ${ROOTCFE}PY/obsunc/
+#
+#elif [ -e "${ROOTCFE}PY/obsunc-master" ];then
+#
+#     # RENAME 
+#     echo "Renaming to ${ROOTCFE}PY/obsunc"
+#     mv ${ROOTCFE}PY/obsunc-master ${ROOTCFE}PY/obsunc
+#
+#elif [ -e "${ROOTCFE}PY/master.zip" ];then
+#
+#     # UNZIP
+#     echo "Unzipping ${ROOTCFE}PY/master.zip" 
+#     unzip ${ROOTCFE}PY/master.zip -d ${ROOTCFE}PY/ 
+#     echo "Removing ${ROOTCFE}PY/master.zip"
+#     rm ${ROOTCFE}PY/master.zip 
+#     # RENAME 
+#     echo "Renaming to ${ROOTCFE}PY/obsunc"
+#     mv ${ROOTCFE}PY/obsunc-master ${ROOTCFE}PY/obsunc
+#
+#else
+#
+#     # DOWNLOAD
+#     echo "
+#          Downloading $OBSUNC_URL
+#          " 
+#     wget -P ${ROOTCFE}PY/ $OBSUNC_URL -O ${ROOTCFE}PY/master.zip 
+#     # CHECK FOR FAILED DOWNLOAD
+#     if [ ! -e "${ROOTCFE}PY/master.zip" ];then
+#         echo "
+#               Download failed. Please download 
+#
+#               $OBSUNC_URL
+#
+#               and store it into ${ROOTCFE}PY/
+#              " 
+#         exit
+#     fi 
+#
+#     # UNZIP
+#     echo "Unzipping ${ROOTCFE}PY/master.zip" 
+#     unzip ${ROOTCFE}PY/master.zip -d ${ROOTCFE}PY/ 
+#     echo "Removing ${ROOTCFE}PY/master.zip"
+#     rm ${ROOTCFE}PY/master.zip 
+#     # RENAME 
+#     echo "Renaming to ${ROOTCFE}PY/obsunc"
+#     mv ${ROOTCFE}PY/obsunc-master ${ROOTCFE}PY/obsunc
+#
+#fi
 
 echo ""
 echo "Note that Kaldi-to-matlab needs additonal actions to be taken see http://kaldi-to-matlab.gforge.inria.fr/"
