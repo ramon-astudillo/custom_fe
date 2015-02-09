@@ -62,14 +62,14 @@ else
 fi
 
 # KALDI-TO-MATLABS'S WRITEKALDIFEATURES 
-if [ -e "${ROOTCFE}MAT/kaldi-to-matlab/" ];then
+if [ -f "${ROOTCFE}MAT/kaldi-to-matlab/writekaldifeatures.m" ];then
 
      # DOWNLOADED
      printf "%-15s\033[92m %-30s \033[0m\n" "KALDI-TO-MATLAB" ${ROOTCFE}MAT/kaldi-to-matlab/
 
 elif [ -e "${ROOTCFE}MAT/kaldi-to-matlab.tar.gz" ];then
 
-     # UNZIP
+     # UNZIP/UNTAR
      echo "Unzipping writekaldifeatures.m from ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz" 
      if [ ! -f ${ROOTCFE}MAT/kaldi-to-matlab ];then 
          mkdir ${ROOTCFE}MAT/kaldi-to-matlab 
@@ -98,13 +98,13 @@ else
          exit
      fi 
 
-     # UNZIP
+     # UNZIP/UNTAR
      echo "Unzipping writehtk.m from ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz" 
-     if [ ! -f ${ROOTCFE}MAT/kaldi-to-matlab ];then 
+     if [ ! -d ${ROOTCFE}MAT/kaldi-to-matlab ];then 
          mkdir ${ROOTCFE}MAT/kaldi-to-matlab
      fi
-     gunzip -p ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz
-     tar -xvf ${ROOTCFE}MAT/kaldi-to-matlab.tar ${ROOTCFE}MAT/kaldi-to-matlab/writekaldifeatures.m
+     gunzip -f ${ROOTCFE}MAT/kaldi-to-matlab.tar.gz
+     tar -xvf ${ROOTCFE}MAT/kaldi-to-matlab.tar -C ${ROOTCFE}MAT/kaldi-to-matlab/ writekaldifeatures.m
      echo "Removing  ${ROOTCFE}MAT/kaldi-to-matlab.tar"
      rm ${ROOTCFE}MAT/kaldi-to-matlab.tar 
 
@@ -219,5 +219,5 @@ else
 fi
 
 echo ""
-echo "Note that Kaldi-to-matlab needs copy-feats to be avaliable in your path"
+echo "Note that Kaldi-to-matlab needs additonal actions to be taken see http://kaldi-to-matlab.gforge.inria.fr/"
 echo ""
