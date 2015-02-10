@@ -2,19 +2,36 @@ custom_fe
 =============
 
 HCopy_UP is a bash wrapper for a custom front-end usable with HTK and Kaldi. It
-imitates HCopy's functionality but calls Matlab or Python code instead. This
+imitates HTK's HCopy interface but calls Matlab or Python code internally. This
 allows to easily create custom front-ends that write the features in HTK or 
 Kaldi format and can be therefore incorporated to the multiple HTK/Kaldi recipes
-available with minor changes.
+available with minor changes. 
 
-Since the wrapper is in bash, its use is limited do unix and cygwin 
-envrionments. Note however that both pure Matlab MCopy and pure Python (not 
-available yet) HCopy wrappers are also provided. These should work also in 
-Windows. See the Matlab case as an example.
+The wrapper is written in bash, thus limited do unix and cygwin environments. 
+Note however that the bash wrapper calls pure Matlab MCopy and pure Python 
+HCopy wrappers internally. These should also work in Windows.
 
-The wrappers also support observation uncertainty techniques. Patches are also
-provided to implement Uncertainty Decoding and Modified Imputation in HTK.
+I created HCopy_UP as a way to unify my multiple front-ends for uncertainty 
+propagation and observation uncertainty techniques. The wrappers therefore 
+support observation uncertainty techniques. I also provide some ready to go
+features with optional uncertainties including
 
+* STFT-UP used to derive a MMSE-MFCC estimator and its residual uncertainty
+* Sparsity based Uncertanties as those used in CHiME 2013 challenge
+* The DIRHA-GRID front-end for interspeech 2014
+
+You can have a loo here for more details
+
+    https://github.com/ramon-astudillo/stft_up_tools
+
+Patches are also provided to modify HTK 3.4.1. in order to be able to process
+these uncertainties using Uncertainty Decoding and Modified Imputation. There are
+also tools by other authors that can be combined with this toolbox e.g. Kaldi
+integration. Have a look at the Robust Speech Processing Special Interest Group 
+(RoSP) WiKi
+
+    https://wiki.inria.fr/rosp/Software
+    
 **Instalation of Matlab Tools from the zip**
 
 If you are familiar with Git, the best way to use these tools is to fork and 
@@ -27,18 +44,17 @@ unzipped tools as
 It should work anyway, it is more a matter of aethetics.
 
 The wrapper makes use of various external toolboxes, Mike Brooke's voicebox 
-toolbox, Emmanuel Vincent's kaldi-to-matlab toolboxe and my stft_up_tools. 
+toolbox, Emmanuel Vincent's kaldi-to-matlab toolbox and my stft_up_tools. 
 They are downloaded automatically by using
 
     ./custom_fe/install
 
-This uses wget which depending on your platform might not be available. The
+This uses wget, which depending on your platform might not be available. The
 script will ask you to download them with a browser in this case. Note also 
 that only the needed functions are unzipped.   
 
 If matlab is available on your bin, this should be enough. If not, you can edit
 HCopy_UP and set the MATLAB_PATH variable pointing to your binary.
-
 
 **Test Using the GRID-DIRHA Baseline Front-End**
 
@@ -58,7 +74,7 @@ Once the Matlab tools are instaled you can do a test run with
                          ./s29_pbiz6p.mfc \
                          -debug
 
-Note that HCopy_UP will inidicate the coresponding -debug call using only
+Note that HCopy_UP will inidicate the corresponding -debug call using only
 MCopy.m. This is much faster as it can be done inside Matlab multiple times
 to debug a custom front-end. Remember to put a breakpoint in MCopy before the 
 exit or it will close Matlab after each run!.
