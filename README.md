@@ -61,8 +61,8 @@ unzipped tools as
 It should work anyway, it is more a matter of aesthetics.
 
 The wrapper makes use of various external toolboxes, Mike Brooke's voicebox 
-toolbox, Emmanuel Vincent's kaldi-to-matlab toolbox and my stft_up_tools. 
-They are downloaded automatically by using
+toolbox, Emmanuel Vincent's kaldi-to-matlab toolbox and my stft_up_tools and 
+obsunc toolboxes. They are downloaded automatically by using
 
     ./custom_fe/install
 
