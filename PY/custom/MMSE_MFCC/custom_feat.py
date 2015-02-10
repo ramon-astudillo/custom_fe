@@ -118,7 +118,7 @@ class FE():
         # 
 
         # Beamformer poiting at the fromtal direction by default
-        if y_t.shape[1] > 1:
+        if len(y.shape) > 1 and  y_t.shape[1] > 1:
             y_t = y_t.sum(1)
 
         #
