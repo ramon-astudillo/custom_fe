@@ -26,6 +26,7 @@ BYTEORDER = VAX
 CFF_FROM_CONFIG_PATH = T
 
 # Speech/Feature Enhancement
+INIT_TIME        = 0.03      # 30ms, Compatible w/ WSJ0-CHIME2
 NOISE_ESTIMATION = IMCRA
 # Use STFT-consistent Wiener posterior
 IUP = 1
